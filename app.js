@@ -120,7 +120,8 @@ module.exports = class InfluxDbApp extends Homey.App {
             tags: [event.id, event.name],
             fields: {
                 [event.capId]: valueFormatted
-            }
+            },
+            timestamp: new Date()
         };
 
         this._influxDb.write(measurement);

@@ -1,6 +1,6 @@
 {
   "id": "homey.influxdb",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "brandColor": "#25b0f8",

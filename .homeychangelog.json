@@ -1,4 +1,7 @@
 {
+  "0.9.1": {
+    "en": "Fixed timestamp for measurements"
+  },
   "0.9.0": {
     "en": "First version"
   }

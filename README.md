@@ -8,6 +8,10 @@ The IP address, port number and database for the InfluxDb must be entered in app
 
 ## Release Notes:
 
-#### 0.0.1
+#### 0.9.1
+
+- Fixed timestamp for measurements
+
+#### 0.9.0
 
 - First version
