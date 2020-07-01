@@ -1,7 +1,7 @@
 {
   "name": "homey-influxdb",
-  "version": "0.0.1",
-  "description": "Write directly to InfluxDb",
+  "version": "0.9.0",
+  "description": "Metrics exporter for InfluxDb",
   "main": "app.js",
   "scripts": {
     "run": "homeyConfig compose && athom project --run",

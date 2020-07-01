@@ -1,6 +1,6 @@
 {
-  "id": "homey.influxdb2",
-  "version": "0.0.1",
+  "id": "homey.influxdb",
+  "version": "0.9.0",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "brandColor": "#25b0f8",
@@ -8,14 +8,16 @@
     "en": "InfluxDb"
   },
   "description": {
-    "en": "Writes directly to InfluxDb"
+    "en": "Metrics exporter for InfluxDb"
   },
   "category": [
     "music"
   ],
   "tags": {
     "en": [
-      "influxdb"
+      "influxdb",
+      "metrics",
+      "grafana"
     ]
   },
   "images": {
