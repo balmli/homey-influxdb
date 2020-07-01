@@ -1,0 +1,6 @@
+env.json
+*.iml
+.idea
+node_modules/*
+!node_modules/athom-api
+!node_modules/influx

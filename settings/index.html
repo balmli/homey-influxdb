@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="material.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+</head>
+<body>
+
+<div class="mdl-grid header">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone grid_center">
+    <img class="logo" src="logo.png" alt="InfluxDb"/>
+  </div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+    <small data-i18n="pair.host_label"></small>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input input_host"
+             type="text"
+             id="host"
+             maxlength="70">
+      <span class="mdl-textfield__error" data-i18n="pair.valid_host"></span>
+    </div>
+  </div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+    <small data-i18n="pair.port_label"></small>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input input_port"
+             type="text"
+             id="port"
+             maxlength="5">
+      <span class="mdl-textfield__error" data-i18n="pair.valid_port"></span>
+    </div>
+  </div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+    <small data-i18n="pair.database_label"></small>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input input_database"
+             type="text"
+             id="database"
+             maxlength="70">
+      <span class="mdl-textfield__error" data-i18n="pair.valid_database"></span>
+    </div>
+  </div>
+</div>
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone grid_center">
+    <button class="mdl-button mdl-js-button mdl-button--raised exec_button" id="save"
+            data-i18n="pair.save_btn" style="color: white; background-color: #00c341;">
+    </button>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function onHomeyReady(Homey) {
+    Homey.ready();
+
+    var hostElement = document.getElementById('host');
+    var portElement = document.getElementById('port');
+    var databaseElement = document.getElementById('database');
+    var saveElement = document.getElementById('save');
+
+    Homey.get('host', function (err, value) {
+      if (err) return Homey.alert(err);
+      hostElement.value = value;
+    });
+
+    Homey.get('port', function (err, value) {
+      if (err) return Homey.alert(err);
+      portElement.value = value;
+    });
+
+    Homey.get('database', function (err, value) {
+      if (err) return Homey.alert(err);
+      databaseElement.value = value;
+    });
+
+    saveElement.addEventListener('click', function (e) {
+      Homey.set('settings', { host: hostElement.value, port: portElement.value, database: databaseElement.value }, function (err) {
+        if (err) {
+          return Homey.alert(err);
+        } else {
+          //return Homey.alert(Homey.__('pair.confirm_message'));
+        }
+      });
+    });
+
+  }
+</script>
+<script src="material.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "homey-influxdb",
+  "version": "0.0.1",
+  "description": "Write directly to InfluxDb",
+  "main": "app.js",
+  "scripts": {
+    "run": "homeyConfig compose && athom project --run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balmli/homey-influxdb.git"
+  },
+  "author": "Bjørnar Almli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/balmli/homey-influxdb/issues"
+  },
+  "homepage": "https://github.com/balmli/homey-influxdb#readme",
+  "dependencies": {
+    "athom-api": "^3.2.8",
+    "influx": "^5.5.2"
+  }
+}
