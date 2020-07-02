@@ -8,6 +8,11 @@ The IP address, port number and database for the InfluxDb must be entered in app
 
 ## Release Notes:
 
+#### 0.9.2
+
+- Added logging of Homey metrics
+- Added protocol, username and password to settings
+
 #### 0.9.1
 
 - Fixed timestamp for measurements

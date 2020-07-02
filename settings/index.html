@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="material.min.css">
+  <link rel="stylesheet" href="mdl-selectfield.min.css">
   <link rel="stylesheet" href="styles.css">
   <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
 </head>
@@ -26,6 +27,17 @@
     </div>
   </div>
 </div>
+
+<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+  <small data-i18n="pair.protocol_label"></small>
+  <div class="mdl-selectfield mdl-js-selectfield">
+    <select id="protocol" name="protocol" class="mdl-selectfield__select">
+      <option value="http">http</option>
+      <option value="https">https</option>
+    </select>
+  </div>
+</div>
+
 <div class="mdl-grid">
   <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
     <small data-i18n="pair.port_label"></small>
@@ -38,6 +50,33 @@
     </div>
   </div>
 </div>
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+    <small data-i18n="pair.username_label"></small>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input input_username"
+             type="text"
+             id="username"
+             maxlength="70">
+      <span class="mdl-textfield__error" data-i18n="pair.valid_username"></span>
+    </div>
+  </div>
+</div>
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+    <small data-i18n="pair.password_label"></small>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input input_password"
+             type="password"
+             id="password"
+             maxlength="70">
+      <span class="mdl-textfield__error" data-i18n="pair.valid_password"></span>
+    </div>
+  </div>
+</div>
+
 <div class="mdl-grid">
   <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
     <small data-i18n="pair.database_label"></small>
@@ -64,7 +103,10 @@
     Homey.ready();
 
     var hostElement = document.getElementById('host');
+    var protocolElement = document.getElementById('protocol');
     var portElement = document.getElementById('port');
+    var usernameElement = document.getElementById('username');
+    var passwordElement = document.getElementById('password');
     var databaseElement = document.getElementById('database');
     var saveElement = document.getElementById('save');
 
@@ -73,9 +115,24 @@
       hostElement.value = value;
     });
 
+    Homey.get('protocol', function (err, value) {
+      if (err) return Homey.alert(err);
+      protocolElement.value = value;
+    });
+
     Homey.get('port', function (err, value) {
       if (err) return Homey.alert(err);
       portElement.value = value;
+    });
+
+    Homey.get('username', function (err, value) {
+      if (err) return Homey.alert(err);
+      usernameElement.value = value;
+    });
+
+    Homey.get('password', function (err, value) {
+      if (err) return Homey.alert(err);
+      passwordElement.value = value;
     });
 
     Homey.get('database', function (err, value) {
@@ -84,7 +141,14 @@
     });
 
     saveElement.addEventListener('click', function (e) {
-      Homey.set('settings', { host: hostElement.value, port: portElement.value, database: databaseElement.value }, function (err) {
+      Homey.set('settings', {
+        host: hostElement.value,
+        protocol: protocolElement.value,
+        port: portElement.value,
+        username: usernameElement.value,
+        password: passwordElement.value,
+        database: databaseElement.value
+      }, function (err) {
         if (err) {
           return Homey.alert(err);
         } else {
@@ -96,5 +160,6 @@
   }
 </script>
 <script src="material.min.js"></script>
+<script src="mdl-selectfield.min.js"></script>
 </body>
 </html>

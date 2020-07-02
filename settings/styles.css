@@ -20,6 +20,16 @@
     font-size: 12pt;
 }
 
+.input_username {
+    text-align: center;
+    font-size: 12pt;
+}
+
+.input_password {
+    text-align: center;
+    font-size: 12pt;
+}
+
 .input_database {
     text-align: center;
     font-size: 12pt;

@@ -2,6 +2,7 @@
 
 const Homey = require('homey');
 const { HomeyAPI } = require('athom-api');
+const HomeyStateHandler = require('./lib/HomeyStateHandler');
 const DeviceHandler = require('./lib/DeviceHandler');
 const InfluxDb = require('./lib/InfluxDb');
 
@@ -17,6 +18,9 @@ module.exports = class InfluxDbApp extends Homey.App {
             }
             this._influxDb = new InfluxDb({ log: this.log });
             await this.initSettings();
+            this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
+            this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
+            this._homey.scheduleFetchState();
             this._devices = new DeviceHandler({ api: this._api, log: this.log });
             this._devices.on('capability', this._onCapability.bind(this));
             await this._devices.registerDevices();
@@ -32,9 +36,21 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (!host || host.length === 0) {
             Homey.ManagerSettings.set('host', '');
         }
+        const protocol = Homey.ManagerSettings.get('protocol');
+        if (!protocol || protocol.length === 0) {
+            Homey.ManagerSettings.set('protocol', 'http');
+        }
         const port = Homey.ManagerSettings.get('port');
         if (!port || port.length === 0) {
             Homey.ManagerSettings.set('port', '8086');
+        }
+        const username = Homey.ManagerSettings.get('username');
+        if (!username || username.length === 0) {
+            Homey.ManagerSettings.set('username', 'root');
+        }
+        const password = Homey.ManagerSettings.get('password');
+        if (!password || password.length === 0) {
+            Homey.ManagerSettings.set('password', 'root');
         }
         const database = Homey.ManagerSettings.get('database');
         if (!database || database.length === 0) {
@@ -43,7 +59,10 @@ module.exports = class InfluxDbApp extends Homey.App {
         Homey.ManagerSettings.on('set', this._onSettingsChanged.bind(this));
         await this._influxDb.updateSettings({
             host: Homey.ManagerSettings.get('host'),
+            protocol: Homey.ManagerSettings.get('protocol'),
             port: Homey.ManagerSettings.get('port'),
+            username: Homey.ManagerSettings.get('username'),
+            password: Homey.ManagerSettings.get('password'),
             database: Homey.ManagerSettings.get('database')
         });
     }
@@ -53,7 +72,10 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (key === 'settings') {
             const settings = Homey.ManagerSettings.get('settings');
             Homey.ManagerSettings.set('host', settings.host);
+            Homey.ManagerSettings.set('protocol', settings.protocol);
             Homey.ManagerSettings.set('port', settings.port);
+            Homey.ManagerSettings.set('username', settings.username);
+            Homey.ManagerSettings.set('password', settings.password);
             Homey.ManagerSettings.set('database', settings.database);
             await this._influxDb.updateSettings(settings);
         }
@@ -103,6 +125,21 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     isSupported(value) {
         return typeof value === 'boolean' || this.isNumber(value);
+    }
+
+    _onHomeyStateChanged(event) {
+        if (!this._influxDb) {
+            return;
+        }
+
+        const measurement = {
+            measurement: event.name,
+            tags: event.tags,
+            fields: event.fields,
+            timestamp: new Date()
+        };
+
+        this._influxDb.write(measurement);
     }
 
     _onCapability(event) {

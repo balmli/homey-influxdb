@@ -1,13 +1,15 @@
 {
   "pair": {
     "title": "InfluxDb",
-    "host_help": "InfluxDb IP address:",
     "host_label": "HOST:",
     "valid_host": "Enter a valid IP address",
-    "port_help": "InfluxDb port:",
+    "protocol_label": "PROTOCOL:",
     "port_label": "PORT:",
     "valid_port": "Enter a valid port number",
-    "database_help": "InfluxDb database:",
+    "username_label": "USERNAME:",
+    "valid_username": "Enter a valid username",
+    "password_label": "PASSWORD:",
+    "valid_password": "Enter a valid password",
     "database_label": "DATABASE:",
     "valid_database": "Enter a valid database",
     "save_btn": "Save changes",
