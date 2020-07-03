@@ -10,6 +10,7 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     async onInit() {
         try {
+            this._running = false;
             Homey.on('unload', () => this._onUninstall());
             await this.getApi();
             this._api.devices.setMaxListeners(9999);
@@ -25,6 +26,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._devices.on('capability', this._onCapability.bind(this));
             await this._devices.registerDevices();
             this._influxDb.scheduleWriteToInfluxDb();
+            this._running = true;
             this.log('InfluxDbApp is running...');
         } catch (err) {
             this.log('onInit error', err);
@@ -108,6 +110,13 @@ module.exports = class InfluxDbApp extends Homey.App {
         }
         return this._api;
     };
+
+    async getStatus() {
+        return {
+            running: this._running,
+            influxDb: this._influxDb ? this._influxDb.getStatus() : {}
+        };
+    }
 
     _onUninstall() {
         try {

@@ -6,33 +6,45 @@
     width: 160px
 }
 
+.mdl-layout {
+    align-items: center;
+    justify-content: center;
+}
+
+.mdl-grid {
+}
+
+.fullWidth {
+}
+
+.grid_label {
+    margin-bottom: 0;
+}
+
+.grid_field {
+    padding-top: 10px;
+}
+
+.grid_status_label {
+    font-size: 10pt;
+    padding-left: 10px !important;
+}
+
+.grid_status_info {
+    font-family: "Courier New", serif;
+    font-size: 9pt;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
 .grid_center {
     text-align: center;
 }
 
-.input_host {
+.input_field {
     text-align: center;
-    font-size: 12pt;
-}
-
-.input_port {
-    text-align: center;
-    font-size: 12pt;
-}
-
-.input_username {
-    text-align: center;
-    font-size: 12pt;
-}
-
-.input_password {
-    text-align: center;
-    font-size: 12pt;
-}
-
-.input_database {
-    text-align: center;
-    font-size: 12pt;
+    font-family: "Courier New", serif;
+    font-size: 14pt;
 }
 
 .exec_button {
