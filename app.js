@@ -58,6 +58,11 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (!database || database.length === 0) {
             Homey.ManagerSettings.set('database', 'homey');
         }
+        this._homey_metrics = Homey.ManagerSettings.get('homey_metrics');
+        if (this._homey_metrics === undefined || this._homey_metrics === null) {
+            this._homey_metrics = true;
+            Homey.ManagerSettings.set('homey_metrics', this._homey_metrics);
+        }
         Homey.ManagerSettings.on('set', this._onSettingsChanged.bind(this));
         await this._influxDb.updateSettings({
             host: Homey.ManagerSettings.get('host'),
@@ -79,7 +84,9 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('username', settings.username);
             Homey.ManagerSettings.set('password', settings.password);
             Homey.ManagerSettings.set('database', settings.database);
+            Homey.ManagerSettings.set('homey_metrics', settings.homey_metrics);
             await this._influxDb.updateSettings(settings);
+            this._homey_metrics = settings.homey_metrics;
         }
     }
 

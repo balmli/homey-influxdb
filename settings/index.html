@@ -7,168 +7,193 @@
     <link rel="stylesheet" href="mdl-selectfield.min.css">
     <link rel="stylesheet" href="styles.css">
     <!-- from https://github.com/swttt/com.swttt.homekit -->
-    <script src='homey-settings-mock.js'></script>
-    <script src='mock-setup.js'></script>
+    <!--script src='homey-settings-mock.js'></script-->
+    <!--script src='mock-setup.js'></script-->
     <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
 </head>
 <body>
 
-<div class="mdl-layout">
-
-    <div class="mdl-grid header">
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <img class="logo" src="logo.png" alt="InfluxDb"/>
+<div id="block_init" style="display: none;">
+    <div class="mdl-layout">
+        <div class="mdl-grid header">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <img class="logo" src="logo.png" alt="InfluxDb"/>
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <span data-i18n="pair.status_wait_1">The app is not completely initialized yet.</span>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                &nbsp;
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <span data-i18n="pair.status_wait_2">Please wait...</span>
+            </div>
         </div>
     </div>
+</div>
 
-    <div id="block_init" class="mdl-grid" style="display: none;">
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <span data-i18n="pair.status_wait_1">The app is not completely initialized yet.</span>
+<div id="block_status" style="display: none;">
+    <div class="mdl-layout">
+        <div class="mdl-grid header">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <img class="logo" src="logo.png" alt="InfluxDb"/>
+            </div>
         </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            &nbsp;
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <span data-i18n="pair.status_wait_2">Please wait...</span>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <table class="mdl-data-table mdl-js-data-table">
+                    <tbody>
+                    <tr>
+                        <td data-i18n="pair.influxdb_url_label"
+                            class="mdl-data-table__cell--non-numeric grid_status_label">
+                            InfluxDb URL:
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric grid_status_info"><span id="influxDb_url"
+                                                                                             class="grid_status_info"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="pair.influxdb_database_label"
+                            class="mdl-data-table__cell--non-numeric grid_status_label">Database:
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric"><span id="influxDb_database"
+                                                                            class="grid_status_info"></span></td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="pair.influxdb_status_label"
+                            class="mdl-data-table__cell--non-numeric grid_status_label">Status:
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric"><span id="influxDb_connected"
+                                                                            class="grid_status_info"></span></td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="pair.influxdb_measurements_label"
+                            class="mdl-data-table__cell--non-numeric grid_status_label">
+                            Measurements:
+                        </td>
+                        <td><span id="influxDb_measurements" class="grid_status_info"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                &nbsp;
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect exec_button"
+                        id="changeSettings"
+                        data-i18n="pair.change_settings_btn" style="color: white; background-color: #00c341;">Change
+                    settings
+                </button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div id="block_status" class="mdl-grid" style="display: none;">
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <table class="mdl-data-table mdl-js-data-table fullWidth">
-                <tbody>
-                <tr>
-                    <td data-i18n="pair.influxdb_url_label" class="mdl-data-table__cell--non-numeric grid_status_label">
-                        InfluxDb URL:
-                    </td>
-                    <td class="mdl-data-table__cell--non-numeric grid_status_info"><span id="influxDb_url"
-                                                                                         class="grid_status_info"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-i18n="pair.influxdb_database_label"
-                        class="mdl-data-table__cell--non-numeric grid_status_label">Database:
-                    </td>
-                    <td class="mdl-data-table__cell--non-numeric"><span id="influxDb_database"
-                                                                        class="grid_status_info"></span></td>
-                </tr>
-                <tr>
-                    <td data-i18n="pair.influxdb_status_label"
-                        class="mdl-data-table__cell--non-numeric grid_status_label">Status:
-                    </td>
-                    <td class="mdl-data-table__cell--non-numeric"><span id="influxDb_connected"
-                                                                        class="grid_status_info"></span></td>
-                </tr>
-                <tr>
-                    <td data-i18n="pair.influxdb_measurements_label"
-                        class="mdl-data-table__cell--non-numeric grid_status_label">
-                        Measurements:
-                    </td>
-                    <td><span id="influxDb_measurements" class="grid_status_info"></span></td>
-                </tr>
-                </tbody>
-            </table>
+<div id="block_settings" style="display: none;">
+    <div class="mdl-layout">
+        <div class="mdl-grid header">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <img class="logo" src="logo.png" alt="InfluxDb"/>
+            </div>
         </div>
+        <div class="mdl-grid">
 
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            &nbsp;
-        </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.host_label">IP address or host name for the InfluxDb database:</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-textfield mdl-js-textfield grid_field">
+                    <input class="mdl-textfield__input input_field"
+                           type="text"
+                           id="host"
+                           maxlength="70">
+                    <span class="mdl-textfield__error" data-i18n="pair.valid_host"></span>
+                </div>
+            </div>
 
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect exec_button"
-                    id="changeSettings"
-                    data-i18n="pair.change_settings_btn" style="color: white; background-color: #00c341;">Change
-                settings
-            </button>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.protocol_label">Protocol:</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-selectfield mdl-js-selectfield">
+                    <select id="protocol" name="protocol" class="mdl-selectfield__select">
+                        <option value="http">http</option>
+                        <option value="https">https</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.port_label">Port number:</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-textfield mdl-js-textfield grid_field">
+                    <input class="mdl-textfield__input input_field"
+                           type="text"
+                           id="port"
+                           maxlength="5">
+                    <span class="mdl-textfield__error" data-i18n="pair.valid_port"></span>
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.username_label">Username:</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-textfield mdl-js-textfield grid_field">
+                    <input class="mdl-textfield__input input_field"
+                           type="text"
+                           id="username"
+                           maxlength="70">
+                    <span class="mdl-textfield__error" data-i18n="pair.valid_username"></span>
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.password_label">Password:</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-textfield mdl-js-textfield grid_field">
+                    <input class="mdl-textfield__input input_field"
+                           type="password"
+                           id="password"
+                           maxlength="70">
+                    <span class="mdl-textfield__error" data-i18n="pair.valid_password"></span>
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
+                <small data-i18n="pair.database_label">Database (will be created if necessary):</small>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <div class="mdl-textfield mdl-js-textfield grid_field">
+                    <input class="mdl-textfield__input input_field"
+                           type="text"
+                           id="database"
+                           maxlength="70">
+                    <span class="mdl-textfield__error" data-i18n="pair.valid_database"></span>
+                </div>
+            </div>
+
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect exec_button"
+                        id="save"
+                        data-i18n="pair.save_btn" style="color: white; background-color: #00c341;">Save settings
+                </button>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect exec_button"
+                        id="cancel"
+                        data-i18n="pair.cancel_btn">Cancel
+                </button>
+            </div>
         </div>
     </div>
-
-    <div id="block_settings" class="mdl-grid" style="display: none;">
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.host_label">IP address or host name for the InfluxDb database:</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-textfield mdl-js-textfield grid_field">
-                <input class="mdl-textfield__input input_field"
-                       type="text"
-                       id="host"
-                       maxlength="70">
-                <span class="mdl-textfield__error" data-i18n="pair.valid_host"></span>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.protocol_label">Protocol:</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-selectfield mdl-js-selectfield">
-                <select id="protocol" name="protocol" class="mdl-selectfield__select">
-                    <option value="http">http</option>
-                    <option value="https">https</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.host_label">Port number:</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-textfield mdl-js-textfield grid_field">
-                <input class="mdl-textfield__input input_field"
-                       type="text"
-                       id="port"
-                       maxlength="5">
-                <span class="mdl-textfield__error" data-i18n="pair.valid_port"></span>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.username_label">Username:</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-textfield mdl-js-textfield grid_field">
-                <input class="mdl-textfield__input input_field"
-                       type="text"
-                       id="username"
-                       maxlength="70">
-                <span class="mdl-textfield__error" data-i18n="pair.valid_username"></span>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.password_label">Password:</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-textfield mdl-js-textfield grid_field">
-                <input class="mdl-textfield__input input_field"
-                       type="password"
-                       id="password"
-                       maxlength="70">
-                <span class="mdl-textfield__error" data-i18n="pair.valid_password"></span>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_label">
-            <small data-i18n="pair.database_label">Database (will be created if necessary):</small>
-        </div>
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <div class="mdl-textfield mdl-js-textfield grid_field">
-                <input class="mdl-textfield__input input_field"
-                       type="text"
-                       id="database"
-                       maxlength="70">
-                <span class="mdl-textfield__error" data-i18n="pair.valid_database"></span>
-            </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-phone grid_center">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect exec_button"
-                    id="save"
-                    data-i18n="pair.save_btn" style="color: white; background-color: #00c341;">Save settings
-            </button>
-        </div>
-    </div>
-
 </div>
 
 <script type="text/javascript">
@@ -186,14 +211,6 @@
             return new Promise((resolve, reject) => {
                 Homey.get(name, (err, result) => {
                     err ? reject(err) : resolve(result);
-                });
-            });
-        };
-
-        const setSetting = function (name, value) {
-            return new Promise((resolve, reject) => {
-                Homey.set(name, value, err => {
-                    err ? reject(err) : resolve(value);
                 });
             });
         };
@@ -219,28 +236,29 @@
         });
 
         document.getElementById('save').addEventListener('click', async function (e) {
-            try {
-                await setSetting('settings', {
-                    host: hostElement.value,
-                    protocol: protocolElement.value,
-                    port: portElement.value,
-                    username: usernameElement.value,
-                    password: passwordElement.value,
-                    database: databaseElement.value
-                });
-                updateView('status');
-                //Homey.alert(Homey.__('pair.confirm_message'));
-            } catch (err) {
-                Homey.alert(err);
-            }
+            updateView('status');
+            Homey.set('settings', {
+                host: hostElement.value,
+                protocol: protocolElement.value,
+                port: portElement.value,
+                username: usernameElement.value,
+                password: passwordElement.value,
+                database: databaseElement.value,
+            }, function (err) {
+                if (err) return Homey.alert(err);
+            });
         });
 
-        const fetchStatus = async function () {
+        document.getElementById('cancel').addEventListener('click', function (e) {
+            updateView('status');
+        });
+
+        const fetchStatus = async function (cb) {
             try {
                 let status = await request('GET', '/status');
                 document.getElementById('influxDb_url').innerText = status.influxDb.url;
                 document.getElementById('influxDb_database').innerText = status.influxDb.database;
-                document.getElementById('influxDb_connected').innerText = status.influxDb.connected === true ? Homey.__('pair.database_connected') : Homey.__('pair.database_disconnected');
+                document.getElementById('influxDb_connected').innerText = status.influxDb.connected === true ? 'Connected' : 'Disconnected';
                 document.getElementById('influxDb_measurements').innerText = status.influxDb.measurements;
                 if (!status.running) {
                     updateView('init');
@@ -251,8 +269,11 @@
                         updateView('settings');
                     }
                 }
-            } catch (err) {
+            } finally {
                 scheduleFetchStatus();
+                if (cb) {
+                    cb();
+                }
             }
         };
 
@@ -263,11 +284,11 @@
             }
         };
 
-        const scheduleFetchStatus = function (interval = 1) {
+        const scheduleFetchStatus = function (interval = 2) {
             clearFetchTimeout();
             if (_view === 'init' || _view === 'status') {
-                _statusTimeout = setTimeout(function () {
-                    fetchStatus();
+                _statusTimeout = setTimeout(async function () {
+                    await fetchStatus();
                 }, interval * 1000);
             }
         };
@@ -279,8 +300,10 @@
             usernameElement.value = await getSetting('username');
             passwordElement.value = await getSetting('password');
             databaseElement.value = await getSetting('database');
-            await fetchStatus();
-            Homey.ready();
+            await fetchStatus(() => {
+                Homey.ready();
+            });
+
         };
 
         initialize();

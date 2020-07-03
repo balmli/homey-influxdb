@@ -2,12 +2,12 @@
 void function () {
     if (!Homey.isMock) return;
 
-    let running = false;
+    let running = true;
     let counter = 10;
 
     setTimeout(() => {
         running = true;
-    }, 2500);
+    }, 2000);
 
     Homey.setSettings({
         host: '',

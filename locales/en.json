@@ -20,6 +20,7 @@
     "valid_database": "Enter a valid database",
     "change_settings_btn": "Change settings",
     "save_btn": "Save settings",
+    "cancel_btn": "Cancel",
     "database_connected": "Connected",
     "database_disconnected": "Disconnected",
     "confirm_message": "Settings were updated!"
