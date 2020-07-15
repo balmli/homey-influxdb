@@ -52,3 +52,9 @@
     background-color: #00c341;
     color: white;
 }
+
+.cancel_button {
+    min-width: 100%;
+    background-color: #a8a8a8;
+    color: white;
+}
