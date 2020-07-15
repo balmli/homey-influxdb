@@ -8,6 +8,10 @@ The IP address, port number and database for the InfluxDb must be entered in app
 
 ## Release Notes:
 
+#### 0.9.5
+
+- Minor fixes
+
 #### 0.9.4
 
 - Minor fixes
