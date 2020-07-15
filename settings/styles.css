@@ -1,28 +1,5 @@
-.header {
-    padding-top: 40px;
-}
-
-.logo {
-    width: 160px
-}
-
-.mdl-layout {
-    align-items: center;
-    justify-content: center;
-}
-
-.mdl-grid {
-}
-
-.fullWidth {
-}
-
-.grid_label {
-    margin-bottom: 0;
-}
-
-.grid_field {
-    padding-top: 10px;
+.grid_status_table {
+    min-width: 100%;
 }
 
 .grid_status_label {
@@ -53,8 +30,12 @@
     color: white;
 }
 
+.save_button {
+    background-color: #00c341;
+    color: white;
+}
+
 .cancel_button {
-    min-width: 100%;
     background-color: #a8a8a8;
     color: white;
 }
