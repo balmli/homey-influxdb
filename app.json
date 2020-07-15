@@ -1,6 +1,6 @@
 {
   "id": "homey.influxdb",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "brandColor": "#25b0f8",
@@ -11,7 +11,7 @@
     "en": "Metrics exporter for InfluxDb"
   },
   "category": [
-    "music"
+    "tools"
   ],
   "tags": {
     "en": [
@@ -49,5 +49,6 @@
   "bugs": {
     "url": "https://github.com/balmli/homey-influxdb/issues"
   },
+  "homeyCommunityTopicId": 32405,
   "source": "https://github.com/balmli/homey-influxdb"
 }
