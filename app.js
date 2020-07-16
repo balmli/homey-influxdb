@@ -116,7 +116,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._api = await HomeyAPI.forCurrentHomey();
         }
         return this._api;
-    };
+    }
 
     async getStatus() {
         return {
