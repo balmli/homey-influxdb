@@ -46,6 +46,14 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (!port || port.length === 0) {
             Homey.ManagerSettings.set('port', '8086');
         }
+        const organization = Homey.ManagerSettings.get('organization');
+        if (!organization || organization.length === 0) {
+            Homey.ManagerSettings.set('organization', '');
+        }
+        const token = Homey.ManagerSettings.get('token');
+        if (!token || token.length === 0) {
+            Homey.ManagerSettings.set('token', '');
+        }
         const username = Homey.ManagerSettings.get('username');
         if (!username || username.length === 0) {
             Homey.ManagerSettings.set('username', 'root');
@@ -68,6 +76,8 @@ module.exports = class InfluxDbApp extends Homey.App {
             host: Homey.ManagerSettings.get('host'),
             protocol: Homey.ManagerSettings.get('protocol'),
             port: Homey.ManagerSettings.get('port'),
+            organization: Homey.ManagerSettings.get('organization'),
+            token: Homey.ManagerSettings.get('token'),
             username: Homey.ManagerSettings.get('username'),
             password: Homey.ManagerSettings.get('password'),
             database: Homey.ManagerSettings.get('database')
@@ -81,6 +91,8 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('host', settings.host);
             Homey.ManagerSettings.set('protocol', settings.protocol);
             Homey.ManagerSettings.set('port', settings.port);
+            Homey.ManagerSettings.set('organization', settings.organization);
+            Homey.ManagerSettings.set('token', settings.token);
             Homey.ManagerSettings.set('username', settings.username);
             Homey.ManagerSettings.set('password', settings.password);
             Homey.ManagerSettings.set('database', settings.database);
@@ -170,7 +182,10 @@ module.exports = class InfluxDbApp extends Homey.App {
 
         const measurement = {
             measurement: event.name.replace(/ /g, '_'),
-            tags: [event.id, event.name],
+            tags: {
+                id: event.id,
+                name: event.name
+            },
             fields: {
                 [event.capId]: valueFormatted
             },

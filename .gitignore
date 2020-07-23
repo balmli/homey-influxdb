@@ -3,4 +3,5 @@ env.json
 .idea
 node_modules/*
 !node_modules/athom-api
-!node_modules/influx
+!node_modules/http.min
+test/*

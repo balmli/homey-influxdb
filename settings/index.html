@@ -46,7 +46,7 @@
                     <td class="mdc-data-table__cell"><span id="influxDb_url" class="grid_status_info"></span></td>
                 </tr>
                 <tr class="mdc-data-table__row">
-                    <th data-i18n="pair.influxdb_database_label" class="mdc-data-table__cell" scope="row">Database:</th>
+                    <th data-i18n="pair.influxdb_database_label" class="mdc-data-table__cell" scope="row">Database/bucket:</th>
                     <td class="mdc-data-table__cell"><span id="influxDb_database" class="grid_status_info"></span></td>
                 </tr>
                 <tr class="mdc-data-table__row">
@@ -155,7 +155,33 @@
             </div>
 
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.username_label" class="mdc-typography--subtitle2">Username:</span>
+                <span data-i18n="pair.organization_label" class="mdc-typography--subtitle2">Organization ID (only for v2):</span>
+            </div>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <div class="mdc-text-field">
+                    <input class="mdc-text-field__input input_field"
+                           id="organization"
+                           maxlength="70">
+                    <div class="mdc-line-ripple"></div>
+                    <label for="organization" class="mdc-floating-label"></label>
+                </div>
+            </div>
+
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <span data-i18n="pair.token_label" class="mdc-typography--subtitle2">Token (only for v2):</span>
+            </div>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <div class="mdc-text-field">
+                    <input class="mdc-text-field__input input_field"
+                           id="token"
+                           maxlength="255">
+                    <div class="mdc-line-ripple"></div>
+                    <label for="token" class="mdc-floating-label"></label>
+                </div>
+            </div>
+
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <span data-i18n="pair.username_label" class="mdc-typography--subtitle2">Username (only for v1):</span>
             </div>
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
                 <div class="mdc-text-field">
@@ -168,7 +194,7 @@
             </div>
 
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.password_label" class="mdc-typography--subtitle2">Password:</span>
+                <span data-i18n="pair.password_label" class="mdc-typography--subtitle2">Password (only for v1):</span>
             </div>
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
                 <div class="mdc-text-field">
@@ -182,7 +208,7 @@
             </div>
 
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.database_label" class="mdc-typography--subtitle2">Database (will be created if necessary):</span>
+                <span data-i18n="pair.database_label" class="mdc-typography--subtitle2">Database/bucket:</span>
             </div>
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
                 <div class="mdc-text-field">
@@ -216,6 +242,8 @@
         let _statusTimeout;
         let hostElement = document.getElementById('host');
         let portElement = document.getElementById('port');
+        let organizationElement = document.getElementById('organization');
+        let tokenElement = document.getElementById('token');
         let usernameElement = document.getElementById('username');
         let passwordElement = document.getElementById('password');
         let databaseElement = document.getElementById('database');
@@ -257,6 +285,8 @@
                 host: hostElement.value,
                 protocol: protocolElement.value,
                 port: portElement.value,
+                organization: organizationElement.value,
+                token: tokenElement.value,
                 username: usernameElement.value,
                 password: passwordElement.value,
                 database: databaseElement.value,
@@ -313,6 +343,8 @@
             hostElement.value = await getSetting('host');
             protocolElement.value = await getSetting('protocol');
             portElement.value = await getSetting('port');
+            organizationElement.value = await getSetting('organization');
+            tokenElement.value = await getSetting('token');
             usernameElement.value = await getSetting('username');
             passwordElement.value = await getSetting('password');
             databaseElement.value = await getSetting('database');

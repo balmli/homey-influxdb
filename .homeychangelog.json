@@ -1,4 +1,7 @@
 {
+  "0.9.6": {
+    "en": "Support for InfluxDB v2 and InfluxDb Cloud. "
+  },
   "0.9.5": {
     "en": "Minor fixes. "
   },

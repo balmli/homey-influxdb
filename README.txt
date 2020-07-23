@@ -3,6 +3,7 @@ This app will log all numeric and boolean capabilities to a InfluxDb database.
 
 The IP address, port number and database for the InfluxDb must be entered in app settings.
 
+For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x they must not be set.
 
 Acknowledgements:
 

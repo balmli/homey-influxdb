@@ -1,6 +1,6 @@
 {
   "name": "homey-influxdb",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Metrics exporter for InfluxDb",
   "main": "app.js",
   "scripts": {
@@ -19,6 +19,6 @@
   "homepage": "https://github.com/balmli/homey-influxdb#readme",
   "dependencies": {
     "athom-api": "^3.2.8",
-    "influx": "^5.5.2"
+    "http.min": "^2.0.1"
   }
 }
