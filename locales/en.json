@@ -15,6 +15,7 @@
     "username_label": "Username (only for v1):",
     "password_label": "Password (only for v1):",
     "database_label": "Database/bucket:",
+    "measurement_mode_label": "Measurement mode:",
     "change_settings_btn": "Change settings",
     "save_btn": "Save settings",
     "cancel_btn": "Cancel",

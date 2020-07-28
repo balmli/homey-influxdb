@@ -71,6 +71,12 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._homey_metrics = true;
             Homey.ManagerSettings.set('homey_metrics', this._homey_metrics);
         }
+        this._measurementMode = Homey.ManagerSettings.get('measurement_mode');
+        if (this._measurementMode === undefined || this._measurementMode === null) {
+            this._measurementMode = 'by_name';
+            Homey.ManagerSettings.set('measurement_mode', this._measurementMode);
+        }
+        this.log('_measurementMode', this._measurementMode);
         Homey.ManagerSettings.on('set', this._onSettingsChanged.bind(this));
         await this._influxDb.updateSettings({
             host: Homey.ManagerSettings.get('host'),
@@ -97,8 +103,10 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('password', settings.password);
             Homey.ManagerSettings.set('database', settings.database);
             Homey.ManagerSettings.set('homey_metrics', settings.homey_metrics);
+            Homey.ManagerSettings.set('measurement_mode', settings.measurement_mode);
             await this._influxDb.updateSettings(settings);
             this._homey_metrics = settings.homey_metrics;
+            this._measurementMode = settings.measurement_mode;
         }
     }
 
@@ -180,11 +188,22 @@ module.exports = class InfluxDbApp extends Homey.App {
             return;
         }
 
+        let measurementName = event.name.replace(/ /g, '_');
+        if (event.zoneName.length > 0) {
+            if (this._measurementMode === 'by_zone') {
+                measurementName = event.zoneName.replace(/ /g, '_');
+            } else if (this._measurementMode === 'by_zone_name') {
+                measurementName = event.zoneName.replace(/ /g, '_') + '_' + event.name.replace(/ /g, '_');
+            }
+        }
+
         const measurement = {
-            measurement: event.name.replace(/ /g, '_'),
+            measurement: measurementName,
             tags: {
                 id: event.id,
-                name: event.name
+                name: event.name,
+                zoneId: event.zoneId,
+                zone: event.zoneName
             },
             fields: {
                 [event.capId]: valueFormatted

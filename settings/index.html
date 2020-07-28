@@ -104,7 +104,7 @@
                 <span data-i18n="pair.protocol_label" class="mdc-typography--subtitle2">Protocol:</span>
             </div>
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-select mdc-select--filled mdc-select--fullwidth">
+                <div id="protocol" class="mdc-select mdc-select--filled mdc-select--fullwidth">
                     <div class="mdc-select__anchor">
                         <span class="mdc-floating-label"></span>
                         <span class="mdc-select__selected-text"></span>
@@ -221,6 +221,50 @@
             </div>
 
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <span data-i18n="pair.measurement_mode_label" class="mdc-typography--subtitle2">Measurement mode:</span>
+            </div>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <div id="measurement_mode" class="mdc-select mdc-select--filled mdc-select--fullwidth">
+                    <div class="mdc-select__anchor">
+                        <span class="mdc-floating-label"></span>
+                        <span class="mdc-select__selected-text"></span>
+                        <span class="mdc-select__dropdown-icon">
+                          <svg
+                                  class="mdc-select__dropdown-icon-graphic"
+                                  viewBox="7 10 10 5">
+                            <polygon
+                                    class="mdc-select__dropdown-icon-inactive"
+                                    stroke="none"
+                                    fill-rule="evenodd"
+                                    points="7 10 12 15 17 10">
+                            </polygon>
+                            <polygon
+                                    class="mdc-select__dropdown-icon-active"
+                                    stroke="none"
+                                    fill-rule="evenodd"
+                                    points="7 15 12 10 17 15">
+                            </polygon>
+                          </svg>
+                        </span>
+                    </div>
+
+                    <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                        <ul class="mdc-list">
+                            <li class="mdc-list-item" data-value="by_name">
+                                <span class="mdc-list-item__text">By name</span>
+                            </li>
+                            <li class="mdc-list-item" data-value="by_zone">
+                                <span class="mdc-list-item__text">By zone</span>
+                            </li>
+                            <li class="mdc-list-item" data-value="by_zone_name">
+                                <span class="mdc-list-item__text">By zone and name</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
                 <button class="mdc-button mdc-button--raised save_button"
                         id="save"
                         style="color: white; background-color: #00c341;">
@@ -249,7 +293,8 @@
         let databaseElement = document.getElementById('database');
 
         const MDCSelect = mdc.select.MDCSelect;
-        const protocolElement = new MDCSelect(document.querySelector('.mdc-select'));
+        const protocolElement = new MDCSelect(document.getElementById('protocol'));
+        const measurementModeElement = new MDCSelect(document.getElementById('measurement_mode'));
 
         const getSetting = function (name) {
             return new Promise((resolve, reject) => {
@@ -290,6 +335,7 @@
                 username: usernameElement.value,
                 password: passwordElement.value,
                 database: databaseElement.value,
+                measurement_mode: measurementModeElement.value,
             }, function (err) {
                 if (err) return Homey.alert(err);
             });
@@ -348,6 +394,7 @@
             usernameElement.value = await getSetting('username');
             passwordElement.value = await getSetting('password');
             databaseElement.value = await getSetting('database');
+            measurementModeElement.value = await getSetting('measurement_mode');
             await fetchStatus(() => {
                 Homey.ready();
             });

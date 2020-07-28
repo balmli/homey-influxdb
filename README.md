@@ -10,6 +10,11 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 0.9.7
+
+- Name standard for measurements can be changed
+- Zone id and name as tags
+
 #### 0.9.6
 
 - Support for InfluxDB v2 and InfluxDb Cloud
