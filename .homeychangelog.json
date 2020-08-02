@@ -1,4 +1,7 @@
 {
+  "0.9.8": {
+    "en": "Handle adding several devices at the same time."
+  },
   "0.9.7": {
     "en": "Name standard for measurements can be changed. Zone id and name as tags."
   },

@@ -10,6 +10,10 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 0.9.8
+
+- Handle adding several devices at the same time
+
 #### 0.9.7
 
 - Name standard for measurements can be changed
