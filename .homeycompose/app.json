@@ -50,35 +50,5 @@
     "url": "https://github.com/balmli/homey-influxdb/issues"
   },
   "homeyCommunityTopicId": 32405,
-  "source": "https://github.com/balmli/homey-influxdb",
-  "flow": {
-    "triggers": [
-      {
-        "id": "offline",
-        "title": {
-          "en": "Database offline"
-        },
-        "hint": {
-          "en": "The InfluxDb went offline"
-        }
-      },
-      {
-        "id": "online",
-        "title": {
-          "en": "Database online"
-        },
-        "hint": {
-          "en": "The InfluxDb is now online again"
-        }
-      }
-    ],
-    "conditions": [
-      {
-        "id": "is_online",
-        "title": {
-          "en": "The InfluxDb is !{{online|offline}}"
-        }
-      }
-    ]
-  }
+  "source": "https://github.com/balmli/homey-influxdb"
 }

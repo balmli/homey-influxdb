@@ -1,0 +1,9 @@
+{
+  "id": "online",
+  "title": {
+    "en": "Database online"
+  },
+  "hint": {
+    "en": "The InfluxDb is now online again"
+  }
+}

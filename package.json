@@ -1,6 +1,6 @@
 {
   "name": "homey-influxdb",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "Metrics exporter for InfluxDb",
   "main": "app.js",
   "scripts": {

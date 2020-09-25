@@ -18,7 +18,10 @@ module.exports = class InfluxDbApp extends Homey.App {
                 await this.waitForHomey();
             }
             this._influxDb = new InfluxDb({ log: this.log });
+            this._influxDb.on('offline', this._onOffline.bind(this));
+            this._influxDb.on('online', this._onOnline.bind(this));
             await this.initSettings();
+            await this.initFlows();
             this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
             this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
             this._homey.scheduleFetchState();
@@ -131,6 +134,18 @@ module.exports = class InfluxDbApp extends Homey.App {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    async initFlows() {
+        this.offlineTrigger = new Homey.FlowCardTrigger('offline');
+        await this.offlineTrigger.register();
+
+        this.onlineTrigger = new Homey.FlowCardTrigger('online');
+        await this.onlineTrigger.register();
+
+        new Homey.FlowCardCondition('is_online')
+            .register()
+            .registerRunListener((args, state) => this._influxDb ? this._influxDb.getStatus().connected : false);
+    }
+
     async getApi() {
         if (!this._api) {
             this._api = await HomeyAPI.forCurrentHomey();
@@ -163,6 +178,14 @@ module.exports = class InfluxDbApp extends Homey.App {
         return typeof value === 'boolean' || this.isNumber(value);
     }
 
+    _onOffline(event) {
+        this.offlineTrigger.trigger();
+    }
+
+    _onOnline(event) {
+        this.onlineTrigger.trigger();
+    }
+
     _onHomeyStateChanged(event) {
         if (!this._influxDb) {
             return;
@@ -172,7 +195,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             measurement: event.name,
             tags: event.tags,
             fields: event.fields,
-            timestamp: new Date()
+            timestamp: event.ts ? event.ts : new Date()
         };
 
         this._influxDb.write(measurement);
@@ -208,7 +231,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             fields: {
                 [event.capId]: valueFormatted
             },
-            timestamp: new Date()
+            timestamp: event.ts ? event.ts : new Date()
         };
 
         this._influxDb.write(measurement);

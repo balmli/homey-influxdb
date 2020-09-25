@@ -1,0 +1,9 @@
+{
+  "id": "offline",
+  "title": {
+    "en": "Database offline"
+  },
+  "hint": {
+    "en": "The InfluxDb went offline"
+  }
+}

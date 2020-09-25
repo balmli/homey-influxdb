@@ -1,0 +1,6 @@
+{
+  "id": "is_online",
+  "title": {
+    "en": "The InfluxDb is !{{online|offline}}"
+  }
+}

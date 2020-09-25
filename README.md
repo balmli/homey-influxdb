@@ -10,6 +10,10 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 0.9.10
+
+- Added triggers for online and offline events
+
 #### 0.9.9
 
 - Handle adding several devices at the same time
