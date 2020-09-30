@@ -8,6 +8,7 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 Acknowledgements:
 
 Thanks to https://github.com/harriedegroot/nl.hdg.mqtt for inspiration!
+Thanks to https://github.com/gruijter/com.gruijter.insights2csv for exporting logs!
 
 
 Disclaimer:

@@ -13,9 +13,13 @@ void function () {
         host: '',
         protocol: 'http',
         port: '8086',
+        organization: '',
+        token: '',
         username: 'root',
         password: 'root',
-        database: 'homey'
+        database: 'homey',
+        measurement_mode: 'by_name',
+        measurement_prefix: '',
     });
 
     Homey.addRoutes([

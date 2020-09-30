@@ -2,8 +2,11 @@
 
 const Homey = require('homey');
 const { HomeyAPI } = require('athom-api');
+const { delay } = require('./lib/util');
+const measurementsUtil = require('./lib/measurementsUtil');
 const HomeyStateHandler = require('./lib/HomeyStateHandler');
 const DeviceHandler = require('./lib/DeviceHandler');
+const InsightsHandler = require('./lib/InsightsHandler');
 const InfluxDb = require('./lib/InfluxDb');
 
 module.exports = class InfluxDbApp extends Homey.App {
@@ -28,6 +31,8 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._devices = new DeviceHandler({ api: this._api, log: this.log });
             this._devices.on('capability', this._onCapability.bind(this));
             await this._devices.registerDevices();
+            this._insights = new InsightsHandler({ api: this._api, log: this.log });
+            this._insights.scheduleExport(60);
             this._influxDb.scheduleWriteToInfluxDb();
             this._running = true;
             this.log('InfluxDbApp is running...');
@@ -74,12 +79,20 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._homey_metrics = true;
             Homey.ManagerSettings.set('homey_metrics', this._homey_metrics);
         }
-        this._measurementMode = Homey.ManagerSettings.get('measurement_mode');
-        if (this._measurementMode === undefined || this._measurementMode === null) {
-            this._measurementMode = 'by_name';
-            Homey.ManagerSettings.set('measurement_mode', this._measurementMode);
+        let measurementMode = Homey.ManagerSettings.get('measurement_mode');
+        if (measurementMode === undefined || measurementMode === null) {
+            measurementMode = 'by_name';
+            Homey.ManagerSettings.set('measurement_mode', measurementMode);
         }
-        this.log('_measurementMode', this._measurementMode);
+        let measurementPrefix = Homey.ManagerSettings.get('measurement_prefix');
+        if (measurementPrefix === undefined || measurementPrefix === null) {
+            measurementPrefix = '';
+            Homey.ManagerSettings.set('measurement_prefix', measurementPrefix);
+        }
+        this._measurementOptions = {
+            measurementMode: measurementMode,
+            measurementPrefix: measurementPrefix
+        };
         Homey.ManagerSettings.on('set', this._onSettingsChanged.bind(this));
         await this._influxDb.updateSettings({
             host: Homey.ManagerSettings.get('host'),
@@ -107,9 +120,13 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('database', settings.database);
             Homey.ManagerSettings.set('homey_metrics', settings.homey_metrics);
             Homey.ManagerSettings.set('measurement_mode', settings.measurement_mode);
+            Homey.ManagerSettings.set('measurement_prefix', settings.measurement_prefix);
             await this._influxDb.updateSettings(settings);
             this._homey_metrics = settings.homey_metrics;
-            this._measurementMode = settings.measurement_mode;
+            this._measurementOptions = {
+                measurementMode: settings.measurement_mode,
+                measurementPrefix: settings.measurement_prefix
+            };
         }
     }
 
@@ -126,12 +143,8 @@ module.exports = class InfluxDbApp extends Homey.App {
                 break;
             }
             numDevices = newRunningDevices;
-            await this._delay(120 * 1000);
+            await delay(120 * 1000);
         }
-    }
-
-    _delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async initFlows() {
@@ -160,22 +173,24 @@ module.exports = class InfluxDbApp extends Homey.App {
         };
     }
 
+    async writeEvents(events) {
+        if (!this._influxDb) {
+            return;
+        }
+        this._influxDb.writeMeasurements(measurementsUtil.fromEvents(events, this._measurementOptions));
+    }
+
     _onUninstall() {
         try {
+            this._insights._clearSchedule();
+            this._homey._clearSchedule();
+            this._influxDb._clearSchedule();
             this._devices.unregisterDevices();
             delete this._devices;
             delete this._influxDb;
         } catch (err) {
             this.log('_onUninstall error', err);
         }
-    }
-
-    isNumber(num) {
-        return (typeof num == 'string' || typeof num == 'number') && !isNaN(num - 0) && num !== '';
-    }
-
-    isSupported(value) {
-        return typeof value === 'boolean' || this.isNumber(value);
     }
 
     _onOffline(event) {
@@ -190,79 +205,14 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (!this._influxDb) {
             return;
         }
-
-        const measurement = {
-            measurement: event.name,
-            tags: event.tags,
-            fields: event.fields,
-            timestamp: event.ts ? event.ts : new Date()
-        };
-
-        this._influxDb.write(measurement);
+        this._influxDb.write(measurementsUtil.fromEvent(event, this._measurementOptions));
     }
 
-    _onCapability(event) {
+    _onCapability(capability) {
         if (!this._influxDb) {
             return;
         }
-
-        const valueFormatted = this._formatValue(event.value, event.capability);
-        if (valueFormatted === undefined || valueFormatted === null || !this.isSupported(event.value)) {
-            return;
-        }
-
-        let measurementName = event.name.replace(/ /g, '_');
-        if (event.zoneName.length > 0) {
-            if (this._measurementMode === 'by_zone') {
-                measurementName = event.zoneName.replace(/ /g, '_');
-            } else if (this._measurementMode === 'by_zone_name') {
-                measurementName = event.zoneName.replace(/ /g, '_') + '_' + event.name.replace(/ /g, '_');
-            }
-        }
-
-        const measurement = {
-            measurement: measurementName,
-            tags: {
-                id: event.id,
-                name: event.name,
-                zoneId: event.zoneId,
-                zone: event.zoneName
-            },
-            fields: {
-                [event.capId]: valueFormatted
-            },
-            timestamp: event.ts ? event.ts : new Date()
-        };
-
-        this._influxDb.write(measurement);
-    }
-
-    _formatValue(value, capability) {
-        if (value === undefined || value === null) {
-            return value;
-        }
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        if (capability.units === '%') {
-            switch (this.percentageScale) {
-                case 'int':
-                    if (capability.min === 0 && capability.max === 1)
-                        return value * 100;
-                    break;
-                case 'float':
-                    if (capability.min === 0 && capability.max === 100)
-                        return value / 100;
-                    break;
-                case 'default':
-                default:
-                    // nothing
-                    break;
-            }
-        }
-
-        return value;
+        this._influxDb.write(measurementsUtil.fromCapability(capability, this._measurementOptions));
     }
 
 };

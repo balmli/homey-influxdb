@@ -1,6 +1,6 @@
 {
   "0.9.10": {
-    "en": "Added triggers for online and offline events."
+    "en": "Added triggers for online and offline events. Added export of CPU usage per app."
   },
   "0.9.9": {
     "en": "Handle adding several devices at the same time."

@@ -13,6 +13,7 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 #### 0.9.10
 
 - Added triggers for online and offline events
+- Added export of CPU usage per app
 
 #### 0.9.9
 
@@ -56,3 +57,14 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 #### 0.9.0
 
 - First version
+
+
+## Acknowledgements:
+
+- Thanks to https://github.com/harriedegroot/nl.hdg.mqtt for inspiration!
+- Thanks to https://github.com/gruijter/com.gruijter.insights2csv for exporting logs!
+
+
+## Disclaimer:
+
+Use at your own risk. I accept no responsibility for any damages caused by using this app.

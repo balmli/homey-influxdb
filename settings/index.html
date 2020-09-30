@@ -265,6 +265,19 @@
             </div>
 
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <span data-i18n="pair.measurement_prefix_label" class="mdc-typography--subtitle2">Measurement prefix:</span>
+            </div>
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
+                <div class="mdc-text-field">
+                    <input class="mdc-text-field__input input_field"
+                           id="measurement_prefix"
+                           maxlength="20">
+                    <div class="mdc-line-ripple"></div>
+                    <label for="measurement_prefix" class="mdc-floating-label"></label>
+                </div>
+            </div>
+
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
                 <button class="mdc-button mdc-button--raised save_button"
                         id="save"
                         style="color: white; background-color: #00c341;">
@@ -291,6 +304,7 @@
         let usernameElement = document.getElementById('username');
         let passwordElement = document.getElementById('password');
         let databaseElement = document.getElementById('database');
+        let measurementPrefixElement = document.getElementById('measurement_prefix');
 
         const MDCSelect = mdc.select.MDCSelect;
         const protocolElement = new MDCSelect(document.getElementById('protocol'));
@@ -336,6 +350,7 @@
                 password: passwordElement.value,
                 database: databaseElement.value,
                 measurement_mode: measurementModeElement.value,
+                measurement_prefix: measurementPrefixElement.value
             }, function (err) {
                 if (err) return Homey.alert(err);
             });
@@ -395,6 +410,7 @@
             passwordElement.value = await getSetting('password');
             databaseElement.value = await getSetting('database');
             measurementModeElement.value = await getSetting('measurement_mode');
+            measurementPrefixElement.value = await getSetting('measurement_prefix');
             await fetchStatus(() => {
                 Homey.ready();
             });

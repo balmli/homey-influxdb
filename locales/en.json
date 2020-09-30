@@ -16,11 +16,15 @@
     "password_label": "Password (only for v1):",
     "database_label": "Database/bucket:",
     "measurement_mode_label": "Measurement mode:",
+    "measurement_prefix_label": "Measurement prefix:",
     "change_settings_btn": "Change settings",
     "save_btn": "Save settings",
     "cancel_btn": "Cancel",
     "database_connected": "Connected",
     "database_disconnected": "Disconnected",
     "confirm_message": "Settings were updated!"
+  },
+  "messages": {
+    "export_not_initialized_yet": "The app is not completely initialized yet, so cannot start export process."
   }
 }
