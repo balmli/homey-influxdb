@@ -14,6 +14,7 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 - Added triggers for online and offline events
 - Added export of CPU usage per app
+- Name for measurements can be prefixed
 
 #### 0.9.9
 
