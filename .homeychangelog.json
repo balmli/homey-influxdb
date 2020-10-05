@@ -1,4 +1,7 @@
 {
+  "0.9.11": {
+    "en": "Added triggers for online and offline events. Added export of CPU usage per app. Name for measurements can be prefixed. Added tag_2 for export of CPU usage."
+  },
   "0.9.10": {
     "en": "Added triggers for online and offline events. Added export of CPU usage per app. Name for measurements can be prefixed."
   },
