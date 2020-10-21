@@ -25,14 +25,10 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._influxDb.on('online', this._onOnline.bind(this));
             await this.initSettings();
             await this.initFlows();
-            this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
-            this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
-            this._homey.scheduleFetchState();
             this._devices = new DeviceHandler({ api: this._api, log: this.log });
             this._devices.on('capability', this._onCapability.bind(this));
             await this._devices.registerDevices();
-            this._insights = new InsightsHandler({ api: this._api, log: this.log });
-            this._insights.scheduleExport(60);
+            await this.enableDisableMetrics();
             this._influxDb.scheduleWriteToInfluxDb();
             this._running = true;
             this.log('InfluxDbApp is running...');
@@ -74,11 +70,6 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (!database || database.length === 0) {
             Homey.ManagerSettings.set('database', 'homey');
         }
-        this._homey_metrics = Homey.ManagerSettings.get('homey_metrics');
-        if (this._homey_metrics === undefined || this._homey_metrics === null) {
-            this._homey_metrics = true;
-            Homey.ManagerSettings.set('homey_metrics', this._homey_metrics);
-        }
         let measurementMode = Homey.ManagerSettings.get('measurement_mode');
         if (measurementMode === undefined || measurementMode === null) {
             measurementMode = 'by_name';
@@ -88,6 +79,15 @@ module.exports = class InfluxDbApp extends Homey.App {
         if (measurementPrefix === undefined || measurementPrefix === null) {
             measurementPrefix = '';
             Homey.ManagerSettings.set('measurement_prefix', measurementPrefix);
+        }
+        const homey_metrics = Homey.ManagerSettings.get('homey_metrics');
+        if (homey_metrics === null) {
+            Homey.ManagerSettings.set('homey_metrics', true);
+        }
+        let write_interval = Homey.ManagerSettings.get('write_interval');
+        if (!write_interval) {
+            write_interval = 10;
+            Homey.ManagerSettings.set('write_interval', write_interval);
         }
         this._measurementOptions = {
             measurementMode: measurementMode,
@@ -104,6 +104,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             password: Homey.ManagerSettings.get('password'),
             database: Homey.ManagerSettings.get('database')
         });
+        this._influxDb.updateWriteInterval(write_interval);
     }
 
     async _onSettingsChanged(key) {
@@ -118,11 +119,9 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('username', settings.username);
             Homey.ManagerSettings.set('password', settings.password);
             Homey.ManagerSettings.set('database', settings.database);
-            Homey.ManagerSettings.set('homey_metrics', settings.homey_metrics);
             Homey.ManagerSettings.set('measurement_mode', settings.measurement_mode);
             Homey.ManagerSettings.set('measurement_prefix', settings.measurement_prefix);
             await this._influxDb.updateSettings(settings);
-            this._homey_metrics = settings.homey_metrics;
             this._measurementOptions = {
                 measurementMode: settings.measurement_mode,
                 measurementPrefix: settings.measurement_prefix
@@ -157,6 +156,24 @@ module.exports = class InfluxDbApp extends Homey.App {
         new Homey.FlowCardCondition('is_online')
             .register()
             .registerRunListener((args, state) => this._influxDb ? this._influxDb.getStatus().connected : false);
+
+        new Homey.FlowCardCondition('is_metrics_enabled')
+            .register()
+            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics'));
+
+        new Homey.FlowCardAction('enable_metrics')
+            .register()
+            .registerRunListener(async (args, state) => {
+                Homey.ManagerSettings.set('homey_metrics', args.enabled === 'true');
+                await this.enableDisableMetrics();
+            });
+
+        new Homey.FlowCardAction('influxdb_write_interval')
+            .register()
+            .registerRunListener(async (args, state) => {
+                Homey.ManagerSettings.set('write_interval', args.write_interval);
+                this._influxDb.updateWriteInterval(args.write_interval);
+            });
     }
 
     async getApi() {
@@ -173,6 +190,36 @@ module.exports = class InfluxDbApp extends Homey.App {
         };
     }
 
+    async enableDisableMetrics() {
+        const enabled = Homey.ManagerSettings.get('homey_metrics');
+
+        if (enabled) {
+            if (!this._homey) {
+                this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
+                this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
+                this._homey.scheduleFetchState();
+            }
+            if (!this._insights) {
+                this._insights = new InsightsHandler({ api: this._api, log: this.log });
+                this._insights.scheduleExport(60);
+            }
+            this.log('Homey metrics was enabled');
+        } else {
+            if (this._insights) {
+                this._insights._clearSchedule();
+                delete this._insights;
+                this._insights = undefined;
+            }
+            if (this._homey) {
+                this._homey._clearSchedule();
+                this._homey.removeListener('state.changed', this._onHomeyStateChanged.bind(this));
+                delete this._homey;
+                this._homey = undefined;
+            }
+            this.log('Homey metrics was disabled');
+        }
+    }
+
     async writeEvents(events) {
         if (!this._influxDb) {
             return;
@@ -182,8 +229,14 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     _onUninstall() {
         try {
-            this._insights._clearSchedule();
-            this._homey._clearSchedule();
+            if (this._insights) {
+                this._insights._clearSchedule();
+                delete this._insights;
+            }
+            if (this._homey) {
+                this._homey._clearSchedule();
+                delete this._homey;
+            }
             this._influxDb._clearSchedule();
             this._devices.unregisterDevices();
             delete this._devices;

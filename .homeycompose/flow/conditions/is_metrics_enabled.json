@@ -1,0 +1,6 @@
+{
+  "id": "is_metrics_enabled",
+  "title": {
+    "en": "Metrics is !{{enabled|disabled}}"
+  }
+}

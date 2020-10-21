@@ -1,0 +1,32 @@
+{
+  "id": "enable_metrics",
+  "title": {
+    "en": "Enable Homey metrics"
+  },
+  "hint": {
+    "en": "Disabling Homey metrics will reduce the CPU load. "
+  },
+  "args": [
+    {
+      "name": "enabled",
+      "title": {
+        "en": "Enable"
+      },
+      "type": "dropdown",
+      "values": [
+        {
+          "id": "true",
+          "label": {
+            "en": "Yes"
+          }
+        },
+        {
+          "id": "false",
+          "label": {
+            "en": "No"
+          }
+        }
+      ]
+    }
+  ]
+}

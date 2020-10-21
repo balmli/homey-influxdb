@@ -1,0 +1,23 @@
+{
+  "id": "influxdb_write_interval",
+  "title": {
+    "en": "Set InfluxDb write interval"
+  },
+  "hint": {
+    "en": "Increasing the interval will reduce the CPU load. "
+  },
+  "args": [
+    {
+      "type": "range",
+      "name": "write_interval",
+      "min": 10,
+      "max": 60,
+      "step": 1,
+      "label": " s",
+      "labelDecimals": 0,
+      "title": {
+        "en": "InfluxDb write interval"
+      }
+    }
+  ]
+}

@@ -1,4 +1,7 @@
 {
+  "0.9.13": {
+    "en": "Added flows to enable/disable metrics and set write interval. "
+  },
   "0.9.12": {
     "en": "Fixed escaping of non-breaking spaces. "
   },

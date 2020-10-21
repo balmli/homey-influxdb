@@ -1,6 +1,6 @@
 {
   "id": "homey.influxdb",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "brandColor": "#25b0f8",
@@ -74,10 +74,73 @@
     ],
     "conditions": [
       {
+        "id": "is_metrics_enabled",
+        "title": {
+          "en": "Metrics is !{{enabled|disabled}}"
+        }
+      },
+      {
         "id": "is_online",
         "title": {
           "en": "The InfluxDb is !{{online|offline}}"
         }
+      }
+    ],
+    "actions": [
+      {
+        "id": "enable_metrics",
+        "title": {
+          "en": "Enable Homey metrics"
+        },
+        "hint": {
+          "en": "Disabling Homey metrics will reduce the CPU load. "
+        },
+        "args": [
+          {
+            "name": "enabled",
+            "title": {
+              "en": "Enable"
+            },
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "true",
+                "label": {
+                  "en": "Yes"
+                }
+              },
+              {
+                "id": "false",
+                "label": {
+                  "en": "No"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "influxdb_write_interval",
+        "title": {
+          "en": "Set InfluxDb write interval"
+        },
+        "hint": {
+          "en": "Increasing the interval will reduce the CPU load. "
+        },
+        "args": [
+          {
+            "type": "range",
+            "name": "write_interval",
+            "min": 10,
+            "max": 60,
+            "step": 1,
+            "label": " s",
+            "labelDecimals": 0,
+            "title": {
+              "en": "InfluxDb write interval"
+            }
+          }
+        ]
       }
     ]
   }
