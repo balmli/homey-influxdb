@@ -1,0 +1,6 @@
+{
+  "id": "is_app_metrics_enabled",
+  "title": {
+    "en": "App metrics is !{{enabled|disabled}}"
+  }
+}

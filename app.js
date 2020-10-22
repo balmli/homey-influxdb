@@ -81,8 +81,10 @@ module.exports = class InfluxDbApp extends Homey.App {
             Homey.ManagerSettings.set('measurement_prefix', measurementPrefix);
         }
         const homey_metrics = Homey.ManagerSettings.get('homey_metrics');
-        if (homey_metrics === null) {
-            Homey.ManagerSettings.set('homey_metrics', true);
+        if (homey_metrics === null || homey_metrics === true) {
+            Homey.ManagerSettings.set('homey_metrics', 'true');
+        } else if (homey_metrics === false) {
+            Homey.ManagerSettings.set('homey_metrics', 'false');
         }
         let write_interval = Homey.ManagerSettings.get('write_interval');
         if (!write_interval) {
@@ -159,12 +161,16 @@ module.exports = class InfluxDbApp extends Homey.App {
 
         new Homey.FlowCardCondition('is_metrics_enabled')
             .register()
-            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics'));
+            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics') !== 'false');
+
+        new Homey.FlowCardCondition('is_app_metrics_enabled')
+            .register()
+            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics') === 'true');
 
         new Homey.FlowCardAction('enable_metrics')
             .register()
             .registerRunListener(async (args, state) => {
-                Homey.ManagerSettings.set('homey_metrics', args.enabled === 'true');
+                Homey.ManagerSettings.set('homey_metrics', args.enabled);
                 await this.enableDisableMetrics();
             });
 
@@ -190,34 +196,46 @@ module.exports = class InfluxDbApp extends Homey.App {
         };
     }
 
-    async enableDisableMetrics() {
-        const enabled = Homey.ManagerSettings.get('homey_metrics');
-
+    async homeyState(enabled, appMetrics) {
         if (enabled) {
             if (!this._homey) {
                 this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
                 this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
                 this._homey.scheduleFetchState();
             }
-            if (!this._insights) {
-                this._insights = new InsightsHandler({ api: this._api, log: this.log });
-                this._insights.scheduleExport(60);
-            }
-            this.log('Homey metrics was enabled');
+            this._homey.appMetrics(appMetrics);
         } else {
-            if (this._insights) {
-                this._insights._clearSchedule();
-                delete this._insights;
-                this._insights = undefined;
-            }
             if (this._homey) {
                 this._homey._clearSchedule();
                 this._homey.removeListener('state.changed', this._onHomeyStateChanged.bind(this));
                 delete this._homey;
                 this._homey = undefined;
             }
-            this.log('Homey metrics was disabled');
         }
+    }
+
+    async insights(enabled) {
+        if (enabled) {
+            if (!this._insights) {
+                this._insights = new InsightsHandler({ api: this._api, log: this.log });
+                this._insights.scheduleExport(60);
+            }
+        } else {
+            if (this._insights) {
+                this._insights._clearSchedule();
+                delete this._insights;
+                this._insights = undefined;
+            }
+        }
+    }
+
+    async enableDisableMetrics() {
+        const enabled = Homey.ManagerSettings.get('homey_metrics');
+        const homeyMetrics = enabled === 'true' || enabled === 'homey';
+        const appMetrics = enabled === 'true';
+        await this.homeyState(homeyMetrics, appMetrics);
+        await this.insights(appMetrics);
+        this.log(`Homey metrics: was ${homeyMetrics ? 'enabled' : 'disabled'}, App metrics: was ${appMetrics ? 'enabled' : 'disabled'}`);
     }
 
     async writeEvents(events) {

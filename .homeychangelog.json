@@ -1,4 +1,7 @@
 {
+  "0.9.14": {
+    "en": "Added flows to enable/disable metrics and set write interval. "
+  },
   "0.9.13": {
     "en": "Added flows to enable/disable metrics and set write interval. "
   },

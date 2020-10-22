@@ -1,6 +1,6 @@
 {
   "id": "homey.influxdb",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "brandColor": "#25b0f8",
@@ -74,9 +74,15 @@
     ],
     "conditions": [
       {
+        "id": "is_app_metrics_enabled",
+        "title": {
+          "en": "App metrics is !{{enabled|disabled}}"
+        }
+      },
+      {
         "id": "is_metrics_enabled",
         "title": {
-          "en": "Metrics is !{{enabled|disabled}}"
+          "en": "Homey metrics is !{{enabled|disabled}}"
         }
       },
       {
@@ -90,10 +96,10 @@
       {
         "id": "enable_metrics",
         "title": {
-          "en": "Enable Homey metrics"
+          "en": "Homey and app metrics"
         },
         "hint": {
-          "en": "Disabling Homey metrics will reduce the CPU load. "
+          "en": "Disabling Homey and app metrics will reduce the CPU load. "
         },
         "args": [
           {
@@ -106,13 +112,19 @@
               {
                 "id": "true",
                 "label": {
-                  "en": "Yes"
+                  "en": "Homey and app metrics"
+                }
+              },
+              {
+                "id": "homey",
+                "label": {
+                  "en": "Homey metrics"
                 }
               },
               {
                 "id": "false",
                 "label": {
-                  "en": "No"
+                  "en": "Disabled"
                 }
               }
             ]
