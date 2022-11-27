@@ -10,6 +10,11 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 1.0.0
+
+- Updated to SDK3
+- Updated settings
+
 #### 0.9.14
 
 - Can select between Homey and app metrics, or just Homey metrics

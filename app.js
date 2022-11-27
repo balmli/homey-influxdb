@@ -14,18 +14,18 @@ module.exports = class InfluxDbApp extends Homey.App {
     async onInit() {
         try {
             this._running = false;
-            Homey.on('unload', () => this._onUninstall());
+            this.homey.on('unload', () => this._onUninstall());
             await this.getApi();
             this._api.devices.setMaxListeners(9999);
             if (await this.shallWaitForHomey()) {
                 await this.waitForHomey();
             }
-            this._influxDb = new InfluxDb({ log: this.log });
+            this._influxDb = new InfluxDb({ homey: this.homey, log: this.log });
             this._influxDb.on('offline', this._onOffline.bind(this));
             this._influxDb.on('online', this._onOnline.bind(this));
             await this.initSettings();
             await this.initFlows();
-            this._devices = new DeviceHandler({ api: this._api, log: this.log });
+            this._devices = new DeviceHandler({ homey: this.homey, api: this._api, log: this.log });
             this._devices.on('capability', this._onCapability.bind(this));
             await this._devices.registerDevices();
             await this.enableDisableMetrics();
@@ -38,73 +38,73 @@ module.exports = class InfluxDbApp extends Homey.App {
     }
 
     async initSettings() {
-        const host = Homey.ManagerSettings.get('host');
+        const host = this.homey.settings.get('host');
         if (!host || host.length === 0) {
-            Homey.ManagerSettings.set('host', '');
+            this.homey.settings.set('host', '');
         }
-        const protocol = Homey.ManagerSettings.get('protocol');
+        const protocol = this.homey.settings.get('protocol');
         if (!protocol || protocol.length === 0) {
-            Homey.ManagerSettings.set('protocol', 'http');
+            this.homey.settings.set('protocol', 'http');
         }
-        const port = Homey.ManagerSettings.get('port');
+        const port = this.homey.settings.get('port');
         if (!port || port.length === 0) {
-            Homey.ManagerSettings.set('port', '8086');
+            this.homey.settings.set('port', '8086');
         }
-        const organization = Homey.ManagerSettings.get('organization');
+        const organization = this.homey.settings.get('organization');
         if (!organization || organization.length === 0) {
-            Homey.ManagerSettings.set('organization', '');
+            this.homey.settings.set('organization', '');
         }
-        const token = Homey.ManagerSettings.get('token');
+        const token = this.homey.settings.get('token');
         if (!token || token.length === 0) {
-            Homey.ManagerSettings.set('token', '');
+            this.homey.settings.set('token', '');
         }
-        const username = Homey.ManagerSettings.get('username');
+        const username = this.homey.settings.get('username');
         if (!username || username.length === 0) {
-            Homey.ManagerSettings.set('username', 'root');
+            this.homey.settings.set('username', 'root');
         }
-        const password = Homey.ManagerSettings.get('password');
+        const password = this.homey.settings.get('password');
         if (!password || password.length === 0) {
-            Homey.ManagerSettings.set('password', 'root');
+            this.homey.settings.set('password', 'root');
         }
-        const database = Homey.ManagerSettings.get('database');
+        const database = this.homey.settings.get('database');
         if (!database || database.length === 0) {
-            Homey.ManagerSettings.set('database', 'homey');
+            this.homey.settings.set('database', 'homey');
         }
-        let measurementMode = Homey.ManagerSettings.get('measurement_mode');
+        let measurementMode = this.homey.settings.get('measurement_mode');
         if (measurementMode === undefined || measurementMode === null) {
             measurementMode = 'by_name';
-            Homey.ManagerSettings.set('measurement_mode', measurementMode);
+            this.homey.settings.set('measurement_mode', measurementMode);
         }
-        let measurementPrefix = Homey.ManagerSettings.get('measurement_prefix');
+        let measurementPrefix = this.homey.settings.get('measurement_prefix');
         if (measurementPrefix === undefined || measurementPrefix === null) {
             measurementPrefix = '';
-            Homey.ManagerSettings.set('measurement_prefix', measurementPrefix);
+            this.homey.settings.set('measurement_prefix', measurementPrefix);
         }
-        const homey_metrics = Homey.ManagerSettings.get('homey_metrics');
+        const homey_metrics = this.homey.settings.get('homey_metrics');
         if (homey_metrics === null || homey_metrics === true) {
-            Homey.ManagerSettings.set('homey_metrics', 'true');
+            this.homey.settings.set('homey_metrics', 'true');
         } else if (homey_metrics === false) {
-            Homey.ManagerSettings.set('homey_metrics', 'false');
+            this.homey.settings.set('homey_metrics', 'false');
         }
-        let write_interval = Homey.ManagerSettings.get('write_interval');
+        let write_interval = this.homey.settings.get('write_interval');
         if (!write_interval) {
             write_interval = 10;
-            Homey.ManagerSettings.set('write_interval', write_interval);
+            this.homey.settings.set('write_interval', write_interval);
         }
         this._measurementOptions = {
             measurementMode: measurementMode,
             measurementPrefix: measurementPrefix
         };
-        Homey.ManagerSettings.on('set', this._onSettingsChanged.bind(this));
+        this.homey.settings.on('set', this._onSettingsChanged.bind(this));
         await this._influxDb.updateSettings({
-            host: Homey.ManagerSettings.get('host'),
-            protocol: Homey.ManagerSettings.get('protocol'),
-            port: Homey.ManagerSettings.get('port'),
-            organization: Homey.ManagerSettings.get('organization'),
-            token: Homey.ManagerSettings.get('token'),
-            username: Homey.ManagerSettings.get('username'),
-            password: Homey.ManagerSettings.get('password'),
-            database: Homey.ManagerSettings.get('database')
+            host: this.homey.settings.get('host'),
+            protocol: this.homey.settings.get('protocol'),
+            port: this.homey.settings.get('port'),
+            organization: this.homey.settings.get('organization'),
+            token: this.homey.settings.get('token'),
+            username: this.homey.settings.get('username'),
+            password: this.homey.settings.get('password'),
+            database: this.homey.settings.get('database')
         });
         this._influxDb.updateWriteInterval(write_interval);
     }
@@ -112,17 +112,17 @@ module.exports = class InfluxDbApp extends Homey.App {
     async _onSettingsChanged(key) {
         this.log('Settings changed', key);
         if (key === 'settings') {
-            const settings = Homey.ManagerSettings.get('settings');
-            Homey.ManagerSettings.set('host', settings.host);
-            Homey.ManagerSettings.set('protocol', settings.protocol);
-            Homey.ManagerSettings.set('port', settings.port);
-            Homey.ManagerSettings.set('organization', settings.organization);
-            Homey.ManagerSettings.set('token', settings.token);
-            Homey.ManagerSettings.set('username', settings.username);
-            Homey.ManagerSettings.set('password', settings.password);
-            Homey.ManagerSettings.set('database', settings.database);
-            Homey.ManagerSettings.set('measurement_mode', settings.measurement_mode);
-            Homey.ManagerSettings.set('measurement_prefix', settings.measurement_prefix);
+            const settings = this.homey.settings.get('settings');
+            this.homey.settings.set('host', settings.host);
+            this.homey.settings.set('protocol', settings.protocol);
+            this.homey.settings.set('port', settings.port);
+            this.homey.settings.set('organization', settings.organization);
+            this.homey.settings.set('token', settings.token);
+            this.homey.settings.set('username', settings.username);
+            this.homey.settings.set('password', settings.password);
+            this.homey.settings.set('database', settings.database);
+            this.homey.settings.set('measurement_mode', settings.measurement_mode);
+            this.homey.settings.set('measurement_prefix', settings.measurement_prefix);
             await this._influxDb.updateSettings(settings);
             this._measurementOptions = {
                 measurementMode: settings.measurement_mode,
@@ -144,47 +144,36 @@ module.exports = class InfluxDbApp extends Homey.App {
                 break;
             }
             numDevices = newRunningDevices;
-            await delay(120 * 1000);
+            await delay(this.homey, 120 * 1000);
         }
     }
 
     async initFlows() {
-        this.offlineTrigger = new Homey.FlowCardTrigger('offline');
-        await this.offlineTrigger.register();
-
-        this.onlineTrigger = new Homey.FlowCardTrigger('online');
-        await this.onlineTrigger.register();
-
-        new Homey.FlowCardCondition('is_online')
-            .register()
+        this.homey.flow.getConditionCard('is_online')
             .registerRunListener((args, state) => this._influxDb ? this._influxDb.getStatus().connected : false);
 
-        new Homey.FlowCardCondition('is_metrics_enabled')
-            .register()
-            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics') !== 'false');
+        this.homey.flow.getConditionCard('is_metrics_enabled')
+            .registerRunListener((args, state) => this.homey.settings.get('homey_metrics') !== 'false');
 
-        new Homey.FlowCardCondition('is_app_metrics_enabled')
-            .register()
-            .registerRunListener((args, state) => Homey.ManagerSettings.get('homey_metrics') === 'true');
+        this.homey.flow.getConditionCard('is_app_metrics_enabled')
+            .registerRunListener((args, state) => this.homey.settings.get('homey_metrics') === 'true');
 
-        new Homey.FlowCardAction('enable_metrics')
-            .register()
+        this.homey.flow.getActionCard('enable_metrics')
             .registerRunListener(async (args, state) => {
-                Homey.ManagerSettings.set('homey_metrics', args.enabled);
+                this.homey.settings.set('homey_metrics', args.enabled);
                 await this.enableDisableMetrics();
             });
 
-        new Homey.FlowCardAction('influxdb_write_interval')
-            .register()
+        this.homey.flow.getActionCard('influxdb_write_interval')
             .registerRunListener(async (args, state) => {
-                Homey.ManagerSettings.set('write_interval', args.write_interval);
+                this.homey.settings.set('write_interval', args.write_interval);
                 this._influxDb.updateWriteInterval(args.write_interval);
             });
     }
 
     async getApi() {
         if (!this._api) {
-            this._api = await HomeyAPI.forCurrentHomey();
+            this._api = await HomeyAPI.forCurrentHomey(this.homey);
         }
         return this._api;
     }
@@ -199,7 +188,7 @@ module.exports = class InfluxDbApp extends Homey.App {
     async homeyState(enabled, appMetrics) {
         if (enabled) {
             if (!this._homey) {
-                this._homey = new HomeyStateHandler({ api: this._api, log: this.log });
+                this._homey = new HomeyStateHandler({ homey: this.homey, api: this._api, log: this.log });
                 this._homey.on('state.changed', this._onHomeyStateChanged.bind(this));
                 this._homey.scheduleFetchState();
             }
@@ -217,7 +206,7 @@ module.exports = class InfluxDbApp extends Homey.App {
     async insights(enabled) {
         if (enabled) {
             if (!this._insights) {
-                this._insights = new InsightsHandler({ api: this._api, log: this.log });
+                this._insights = new InsightsHandler({ homey: this.homey, api: this._api, log: this.log });
                 this._insights.scheduleExport(60);
             }
         } else {
@@ -230,7 +219,7 @@ module.exports = class InfluxDbApp extends Homey.App {
     }
 
     async enableDisableMetrics() {
-        const enabled = Homey.ManagerSettings.get('homey_metrics');
+        const enabled = this.homey.settings.get('homey_metrics');
         const homeyMetrics = enabled === 'true' || enabled === 'homey';
         const appMetrics = enabled === 'true';
         await this.homeyState(homeyMetrics, appMetrics);
@@ -265,11 +254,15 @@ module.exports = class InfluxDbApp extends Homey.App {
     }
 
     _onOffline(event) {
-        this.offlineTrigger.trigger();
+        this.homey.flow.getTriggerCard('offline')
+          .trigger()
+          .catch(err => this.log(err));
     }
 
     _onOnline(event) {
-        this.onlineTrigger.trigger();
+        this.homey.flow.getTriggerCard('online')
+          .trigger()
+          .catch(err => this.log(err));
     }
 
     _onHomeyStateChanged(event) {

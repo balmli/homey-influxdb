@@ -3,6 +3,9 @@
   "title": {
     "en": "Set InfluxDb write interval"
   },
+  "titleFormatted": {
+    "en": "Set InfluxDb write interval to [[write_interval]]"
+  },
   "hint": {
     "en": "Increasing the interval will reduce the CPU load. "
   },

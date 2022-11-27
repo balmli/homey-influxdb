@@ -3,6 +3,9 @@
   "title": {
     "en": "Homey and app metrics"
   },
+  "titleFormatted": {
+    "en": "Homey and app metrics is [[enabled]]"
+  },
   "hint": {
     "en": "Disabling Homey and app metrics will reduce the CPU load. "
   },

@@ -1,4 +1,7 @@
 {
+  "1.0.0": {
+    "en": "Updated to SDK3. Updated settings. "
+  },
   "0.9.14": {
     "en": "Added flows to enable/disable metrics and set write interval. "
   },

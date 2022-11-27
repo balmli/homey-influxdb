@@ -2,8 +2,6 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="material-components-web.min.css">
     <link rel="stylesheet" href="styles.css">
     <!-- from https://github.com/swttt/com.swttt.homekit -->
     <!--script src='homey-settings-mock.js'></script-->
@@ -12,414 +10,233 @@
 </head>
 <body>
 
-<div id="block_init" style="display: none;">
-    <div class="mdc-layout-grid">
-        <div class="mdc-layout-grid__inner">
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <img class="logo" src="logo.png" alt="InfluxDb"/>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.status_wait_1" class="mdc-typography--body1">The app is not completely initialized yet.</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.status_wait_2" class="mdc-typography--body1">Please wait...</span>
-            </div>
-        </div>
+<header class="homey-header">
+    <div class="grid_center">
+        <img class="logo" src="logo.png" alt="InfluxDb"/>
     </div>
-</div>
+    <div id="block_init" style="display: none;">
+        <p class="homey-subtitle" data-i18n="settings.status_wait_1"></p>
+        <p class="homey-subtitle" data-i18n="settings.status_wait_2"></p>
+    </div>
+</header>
 
 <div id="block_status" style="display: none;">
-    <div class="mdc-layout-grid">
-        <div class="mdc-layout-grid__inner">
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <img class="logo" src="logo.png" alt="InfluxDb"/>
-            </div>
+    <fieldset class="homey-form-fieldset">
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="influxDb_url" data-i18n="pair.influxdb_url_label">InfluxDb URL:</label>
+            <span id="influxDb_url" class="grid_status_info"></span>
         </div>
-    </div>
-
-    <div class="mdc-data-table grid_status_table">
-        <div class="mdc-data-table__table-container">
-            <table class="mdc-data-table__table">
-                <tbody class="mdc-data-table__content">
-                <tr class="mdc-data-table__row">
-                    <th data-i18n="pair.influxdb_url_label" class="mdc-data-table__cell" scope="row">InfluxDb URL:</th>
-                    <td class="mdc-data-table__cell"><span id="influxDb_url" class="grid_status_info"></span></td>
-                </tr>
-                <tr class="mdc-data-table__row">
-                    <th data-i18n="pair.influxdb_database_label" class="mdc-data-table__cell" scope="row">Database/bucket:</th>
-                    <td class="mdc-data-table__cell"><span id="influxDb_database" class="grid_status_info"></span></td>
-                </tr>
-                <tr class="mdc-data-table__row">
-                    <th data-i18n="pair.influxdb_status_label" class="mdc-data-table__cell" scope="row">Status:</th>
-                    <td class="mdc-data-table__cell"><span id="influxDb_connected" class="grid_status_info"></span></td>
-                </tr>
-                <tr class="mdc-data-table__row">
-                    <th data-i18n="pair.influxdb_measurements_label" class="mdc-data-table__cell" scope="row">
-                        Measurements:
-                    </th>
-                    <td class="mdc-data-table__cell mdc-data-table__cell--numeric"><span id="influxDb_measurements"
-                                                                                         class="grid_status_info"></span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="influxDb_database" data-i18n="pair.influxdb_database_label">Database/bucket:</label>
+            <span id="influxDb_database" class="grid_status_info"></span>
         </div>
-    </div>
-
-    <div class="mdc-layout-grid">
-        <div class="mdc-layout-grid__inner">
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 ">
-                <button class="mdc-button mdc-button--raised exec_button"
-                        id="changeSettings"
-                        style="color: white; background-color: #00c341;">
-                    <span data-i18n="pair.change_settings_btn" class="mdc-button__label ">Change settings</span>
-                </button>
-            </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="influxDb_connected"
+                   data-i18n="pair.influxdb_status_label">Status:</label>
+            <span id="influxDb_connected" class="grid_status_info"></span>
         </div>
-    </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="influxDb_measurements" data-i18n="pair.influxdb_measurements_label">Measurements:</label>
+            <span id="influxDb_measurements" class="grid_status_info"></span>
+        </div>
+    </fieldset>
 
+    <button class="homey-button-primary-full"
+            id="changeSettings"
+            data-i18n="pair.change_settings_btn"
+    ></button>
 </div>
 
 <div id="block_settings" style="display: none;">
-    <div class="mdc-layout-grid">
-        <div class="mdc-layout-grid__inner">
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <img class="logo" src="logo.png" alt="InfluxDb"/>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.host_label" class="mdc-typography--subtitle2">IP address or host name for the InfluxDb database:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="host"
-                           maxlength="70">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="host" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.protocol_label" class="mdc-typography--subtitle2">Protocol:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div id="protocol" class="mdc-select mdc-select--filled mdc-select--fullwidth">
-                    <div class="mdc-select__anchor">
-                        <span class="mdc-floating-label"></span>
-                        <span class="mdc-select__selected-text"></span>
-                        <span class="mdc-select__dropdown-icon">
-                          <svg
-                                  class="mdc-select__dropdown-icon-graphic"
-                                  viewBox="7 10 10 5">
-                            <polygon
-                                    class="mdc-select__dropdown-icon-inactive"
-                                    stroke="none"
-                                    fill-rule="evenodd"
-                                    points="7 10 12 15 17 10">
-                            </polygon>
-                            <polygon
-                                    class="mdc-select__dropdown-icon-active"
-                                    stroke="none"
-                                    fill-rule="evenodd"
-                                    points="7 15 12 10 17 15">
-                            </polygon>
-                          </svg>
-                        </span>
-                    </div>
-
-                    <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-                        <ul class="mdc-list">
-                            <li class="mdc-list-item" data-value="http">
-                                <span class="mdc-list-item__text">http</span>
-                            </li>
-                            <li class="mdc-list-item" data-value="https">
-                                <span class="mdc-list-item__text">https</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.port_label" class="mdc-typography--subtitle2">Port number:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="port"
-                           maxlength="5">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="port" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.organization_label" class="mdc-typography--subtitle2">Organization ID (only for v2):</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="organization"
-                           maxlength="70">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="organization" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.token_label" class="mdc-typography--subtitle2">Token (only for v2):</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="token"
-                           maxlength="255">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="token" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.username_label" class="mdc-typography--subtitle2">Username (only for v1):</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="username"
-                           maxlength="70">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="username" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.password_label" class="mdc-typography--subtitle2">Password (only for v1):</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           type="password"
-                           id="password"
-                           maxlength="70">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="password" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.database_label" class="mdc-typography--subtitle2">Database/bucket:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="database"
-                           maxlength="70">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="database" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.measurement_mode_label" class="mdc-typography--subtitle2">Measurement mode:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div id="measurement_mode" class="mdc-select mdc-select--filled mdc-select--fullwidth">
-                    <div class="mdc-select__anchor">
-                        <span class="mdc-floating-label"></span>
-                        <span class="mdc-select__selected-text"></span>
-                        <span class="mdc-select__dropdown-icon">
-                          <svg
-                                  class="mdc-select__dropdown-icon-graphic"
-                                  viewBox="7 10 10 5">
-                            <polygon
-                                    class="mdc-select__dropdown-icon-inactive"
-                                    stroke="none"
-                                    fill-rule="evenodd"
-                                    points="7 10 12 15 17 10">
-                            </polygon>
-                            <polygon
-                                    class="mdc-select__dropdown-icon-active"
-                                    stroke="none"
-                                    fill-rule="evenodd"
-                                    points="7 15 12 10 17 15">
-                            </polygon>
-                          </svg>
-                        </span>
-                    </div>
-
-                    <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-                        <ul class="mdc-list">
-                            <li class="mdc-list-item" data-value="by_name">
-                                <span class="mdc-list-item__text">By name</span>
-                            </li>
-                            <li class="mdc-list-item" data-value="by_zone">
-                                <span class="mdc-list-item__text">By zone</span>
-                            </li>
-                            <li class="mdc-list-item" data-value="by_zone_name">
-                                <span class="mdc-list-item__text">By zone and name</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <span data-i18n="pair.measurement_prefix_label" class="mdc-typography--subtitle2">Measurement prefix:</span>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <div class="mdc-text-field">
-                    <input class="mdc-text-field__input input_field"
-                           id="measurement_prefix"
-                           maxlength="20">
-                    <div class="mdc-line-ripple"></div>
-                    <label for="measurement_prefix" class="mdc-floating-label"></label>
-                </div>
-            </div>
-
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 grid_center">
-                <button class="mdc-button mdc-button--raised save_button"
-                        id="save"
-                        style="color: white; background-color: #00c341;">
-                    <span data-i18n="pair.save_btn" class="mdc-button__label ">Save settings</span>
-                </button>
-                <button class="mdc-button mdc-button--outlined cancel_button"
-                        id="cancel"
-                        style="color: white; background-color: #a8a8a8;">
-                    <span data-i18n="pair.cancel_btn" class="mdc-button__label ">Cancel</span>
-                </button>
-            </div>
+    <fieldset class="homey-form-fieldset">
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="host" data-i18n="pair.host_label">IP address or host name for the
+                InfluxDb database:</label>
+            <input class="homey-form-input" id="host" type="text" maxlength="70">
         </div>
-    </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="protocol" data-i18n="pair.protocol_label">Protocol:</label>
+            <select class="homey-form-select" name="protocol" id="protocol">
+                <option value="http">http</option>
+                <option value="https">https</option>
+            </select>
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="port" data-i18n="pair.port_label">Port number:</label>
+            <input class="homey-form-input" id="port" type="text" maxlength="5">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="organization" data-i18n="pair.organization_label">Organization ID
+                (only for v2):</label>
+            <input class="homey-form-input" id="organization" type="text" maxlength="70">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="token" data-i18n="pair.token_label">Token (only for v2):</label>
+            <input class="homey-form-input" id="token" type="text" maxlength="255">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="username" data-i18n="pair.username_label">Username (only for
+                v1):</label>
+            <input class="homey-form-input" id="username" type="text" maxlength="70">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="password" data-i18n="pair.password_label">Password (only for
+                v1):</label>
+            <input class="homey-form-input" id="password" type="password" maxlength="70">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="database" data-i18n="pair.database_label">Database/bucket:</label>
+            <input class="homey-form-input" id="database" type="text" maxlength="70">
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="measurement_mode" data-i18n="pair.measurement_mode_label">Measurement
+                mode:</label>
+            <select class="homey-form-select" name="measurement_mode" id="measurement_mode">
+                <option value="by_name">By name</option>
+                <option value="by_zone">By zone</option>
+                <option value="by_zone_name">By zone and name</option>
+            </select>
+        </div>
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="measurement_prefix" data-i18n="pair.measurement_prefix_label">Measurement
+                prefix:</label>
+            <input class="homey-form-input" id="measurement_prefix" type="text" maxlength="20">
+        </div>
+    </fieldset>
+
+    <button class="homey-button-primary-full"
+            id="save"
+            data-i18n="pair.save_btn"
+    ></button>
+
+    <button class="homey-button-transparent"
+            id="cancel"
+            data-i18n="pair.cancel_btn"
+    ></button>
 </div>
 
 <script type="text/javascript">
-    function onHomeyReady(Homey) {
-        let _view;
-        let _statusTimeout;
-        let hostElement = document.getElementById('host');
-        let portElement = document.getElementById('port');
-        let organizationElement = document.getElementById('organization');
-        let tokenElement = document.getElementById('token');
-        let usernameElement = document.getElementById('username');
-        let passwordElement = document.getElementById('password');
-        let databaseElement = document.getElementById('database');
-        let measurementPrefixElement = document.getElementById('measurement_prefix');
+  function onHomeyReady(Homey) {
+    let _view;
+    let _statusTimeout;
+    let hostElement = document.getElementById('host');
+    let portElement = document.getElementById('port');
+    let organizationElement = document.getElementById('organization');
+    let tokenElement = document.getElementById('token');
+    let usernameElement = document.getElementById('username');
+    let passwordElement = document.getElementById('password');
+    let databaseElement = document.getElementById('database');
+    let measurementPrefixElement = document.getElementById('measurement_prefix');
 
-        const MDCSelect = mdc.select.MDCSelect;
-        const protocolElement = new MDCSelect(document.getElementById('protocol'));
-        const measurementModeElement = new MDCSelect(document.getElementById('measurement_mode'));
+    const protocolElement = document.getElementById('protocol');
+    const measurementModeElement = document.getElementById('measurement_mode');
 
-        const getSetting = function (name) {
-            return new Promise((resolve, reject) => {
-                Homey.get(name, (err, result) => {
-                    err ? reject(err) : resolve(result);
-                });
-            });
-        };
-
-        const request = function (method, endpoint, data) {
-            return new Promise((resolve, reject) => {
-                Homey.api(method, endpoint, data, (err, result) => {
-                    err ? reject(err) : resolve(result);
-                });
-            }).catch(err => Homey.alert(err));
-        };
-
-        const updateView = function (newView) {
-            _view = newView;
-            document.getElementById('block_init').style.display = _view === 'init' ? 'block' : 'none';
-            document.getElementById('block_status').style.display = _view === 'status' ? 'block' : 'none';
-            document.getElementById('block_settings').style.display = _view === 'settings' ? 'block' : 'none';
-            scheduleFetchStatus();
-        };
-
-        document.getElementById('changeSettings').addEventListener('click', function (e) {
-            updateView('settings');
+    const getSetting = function (name) {
+      return new Promise((resolve, reject) => {
+        Homey.get(name, (err, result) => {
+          err ? reject(err) : resolve(result);
         });
+      });
+    };
 
-        document.getElementById('save').addEventListener('click', async function (e) {
-            updateView('status');
-            Homey.set('settings', {
-                host: hostElement.value,
-                protocol: protocolElement.value,
-                port: portElement.value,
-                organization: organizationElement.value,
-                token: tokenElement.value,
-                username: usernameElement.value,
-                password: passwordElement.value,
-                database: databaseElement.value,
-                measurement_mode: measurementModeElement.value,
-                measurement_prefix: measurementPrefixElement.value
-            }, function (err) {
-                if (err) return Homey.alert(err);
-            });
+    const updateView = function (newView) {
+      _view = newView;
+      document.getElementById('block_init').style.display = _view === 'init' ? 'block' : 'none';
+      document.getElementById('block_status').style.display = _view === 'status' ? 'block' : 'none';
+      document.getElementById('block_settings').style.display = _view === 'settings' ? 'block' : 'none';
+      scheduleFetchStatus();
+    };
+
+    document.getElementById('changeSettings').addEventListener('click', function (e) {
+      updateView('settings');
+    });
+
+    document.getElementById('save').addEventListener('click', async function (e) {
+      updateView('status');
+      Homey.set('settings', {
+        host: hostElement.value,
+        protocol: protocolElement.value,
+        port: portElement.value,
+        organization: organizationElement.value,
+        token: tokenElement.value,
+        username: usernameElement.value,
+        password: passwordElement.value,
+        database: databaseElement.value,
+        measurement_mode: measurementModeElement.value,
+        measurement_prefix: measurementPrefixElement.value
+      }, function (err) {
+        if (err) return Homey.alert(err);
+      });
+    });
+
+    document.getElementById('cancel').addEventListener('click', function (e) {
+      updateView('status');
+    });
+
+    const fetchStatus = async function (cb) {
+      try {
+        Homey.api('GET', '/status', null, function (err, status) {
+          if (err) {
+            Homey.alert(err);
+          } else {
+            document.getElementById('influxDb_url').innerText = status.influxDb.url;
+            document.getElementById('influxDb_database').innerText = status.influxDb.database;
+            document.getElementById('influxDb_connected').innerText = status.influxDb.connected === true ? 'Connected' : 'Disconnected';
+            document.getElementById('influxDb_measurements').innerText = status.influxDb.measurements;
+            if (!status.running) {
+              updateView('init');
+            } else if ((!_view || _view === 'init') && status.running) {
+              if (status.influxDb.url && status.influxDb.url.length > 0) {
+                updateView('status');
+              } else {
+                updateView('settings');
+              }
+            }
+          }
         });
+      } finally {
+        scheduleFetchStatus();
+        if (cb) {
+          cb();
+        }
+      }
+    };
 
-        document.getElementById('cancel').addEventListener('click', function (e) {
-            updateView('status');
-        });
+    const clearFetchTimeout = function () {
+      if (_statusTimeout) {
+        clearTimeout(_statusTimeout);
+        _statusTimeout = undefined;
+      }
+    };
 
-        const fetchStatus = async function (cb) {
-            try {
-                let status = await request('GET', '/status');
-                document.getElementById('influxDb_url').innerText = status.influxDb.url;
-                document.getElementById('influxDb_database').innerText = status.influxDb.database;
-                document.getElementById('influxDb_connected').innerText = status.influxDb.connected === true ? 'Connected' : 'Disconnected';
-                document.getElementById('influxDb_measurements').innerText = status.influxDb.measurements;
-                if (!status.running) {
-                    updateView('init');
-                } else if ((!_view || _view === 'init') && status.running) {
-                    if (status.influxDb.url && status.influxDb.url.length > 0) {
-                        updateView('status');
-                    } else {
-                        updateView('settings');
-                    }
-                }
-            } finally {
-                scheduleFetchStatus();
-                if (cb) {
-                    cb();
-                }
-            }
-        };
+    const scheduleFetchStatus = function (interval = 2) {
+      clearFetchTimeout();
+      if (_view === 'init' || _view === 'status') {
+        _statusTimeout = setTimeout(async function () {
+          await fetchStatus();
+        }, interval * 1000);
+      }
+    };
 
-        const clearFetchTimeout = function () {
-            if (_statusTimeout) {
-                clearTimeout(_statusTimeout);
-                _statusTimeout = undefined;
-            }
-        };
+    const initialize = async function () {
+      hostElement.value = await getSetting('host');
+      protocolElement.value = await getSetting('protocol');
+      portElement.value = await getSetting('port');
+      organizationElement.value = await getSetting('organization');
+      tokenElement.value = await getSetting('token');
+      usernameElement.value = await getSetting('username');
+      passwordElement.value = await getSetting('password');
+      databaseElement.value = await getSetting('database');
+      measurementModeElement.value = await getSetting('measurement_mode');
+      measurementPrefixElement.value = await getSetting('measurement_prefix');
+      await fetchStatus(() => {
+        Homey.ready();
+      });
 
-        const scheduleFetchStatus = function (interval = 2) {
-            clearFetchTimeout();
-            if (_view === 'init' || _view === 'status') {
-                _statusTimeout = setTimeout(async function () {
-                    await fetchStatus();
-                }, interval * 1000);
-            }
-        };
+    };
 
-        const initialize = async function () {
-            hostElement.value = await getSetting('host');
-            protocolElement.value = await getSetting('protocol');
-            portElement.value = await getSetting('port');
-            organizationElement.value = await getSetting('organization');
-            tokenElement.value = await getSetting('token');
-            usernameElement.value = await getSetting('username');
-            passwordElement.value = await getSetting('password');
-            databaseElement.value = await getSetting('database');
-            measurementModeElement.value = await getSetting('measurement_mode');
-            measurementPrefixElement.value = await getSetting('measurement_prefix');
-            await fetchStatus(() => {
-                Homey.ready();
-            });
-
-        };
-
-        initialize();
-    }
+    initialize();
+  }
 </script>
-<script src="material-components-web.min.js"></script>
 </body>
 </html>

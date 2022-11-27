@@ -1,8 +1,8 @@
 {
   "id": "homey.influxdb",
-  "version": "0.9.14",
-  "compatibility": ">=2.0.0",
-  "sdk": 2,
+  "version": "1.0.0",
+  "compatibility": ">=8.1.0",
+  "sdk": 3,
   "brandColor": "#25b0f8",
   "name": {
     "en": "InfluxDb"
@@ -27,6 +27,12 @@
   "permissions": [
     "homey:manager:api"
   ],
+  "api": {
+    "getStatus": {
+      "method": "GET",
+      "path": "/status"
+    }
+  },
   "author": {
     "name": "Bjørnar Almli",
     "email": "bjornar.almli@gmail.com"
@@ -45,9 +51,6 @@
         "username": "bjornaralmli"
       }
     }
-  },
-  "bugs": {
-    "url": "https://github.com/balmli/homey-influxdb/issues"
   },
   "homeyCommunityTopicId": 32405,
   "source": "https://github.com/balmli/homey-influxdb"
