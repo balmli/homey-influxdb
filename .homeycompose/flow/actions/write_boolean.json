@@ -1,0 +1,28 @@
+{
+  "id": "write_boolean",
+  "title": {
+    "en": "Write boolean measurement"
+  },
+  "titleFormatted": {
+    "en": "Write measurement [[measurement]] as boolean [[value]]"
+  },
+  "hint": {
+    "en": "Write a boolean value to InfluxDb"
+  },
+  "args": [
+    {
+      "type": "text",
+      "name": "measurement",
+      "title": {
+        "en": "Measurement name"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "value",
+      "title": {
+        "en": "Value"
+      }
+    }
+  ]
+}

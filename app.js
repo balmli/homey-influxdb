@@ -169,6 +169,15 @@ module.exports = class InfluxDbApp extends Homey.App {
                 this.homey.settings.set('write_interval', args.write_interval);
                 this._influxDb.updateWriteInterval(args.write_interval);
             });
+
+        this.homey.flow.getActionCard('write_boolean')
+          .registerRunListener(async (args, state) => this.writeFromValue(args.measurement, args.value));
+
+        this.homey.flow.getActionCard('write_number')
+          .registerRunListener(async (args, state) => this.writeFromValue(args.measurement, args.value));
+
+        this.homey.flow.getActionCard('write_text')
+          .registerRunListener(async (args, state) => this.writeFromValue(args.measurement, args.value));
     }
 
     async getApi() {
@@ -225,6 +234,13 @@ module.exports = class InfluxDbApp extends Homey.App {
         await this.homeyState(homeyMetrics, appMetrics);
         await this.insights(appMetrics);
         this.log(`Homey metrics: was ${homeyMetrics ? 'enabled' : 'disabled'}, App metrics: was ${appMetrics ? 'enabled' : 'disabled'}`);
+    }
+
+    async writeFromValue(measurement, value) {
+        if (!this._influxDb) {
+            return;
+        }
+        this._influxDb.write(measurementsUtil.fromValue(measurement, value, this._measurementOptions));
     }
 
     async writeEvents(events) {

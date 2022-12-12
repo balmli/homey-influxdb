@@ -1,0 +1,28 @@
+{
+  "id": "write_number",
+  "title": {
+    "en": "Write number measurement"
+  },
+  "titleFormatted": {
+    "en": "Write measurement [[measurement]] as number [[value]]"
+  },
+  "hint": {
+    "en": "Write a number value to InfluxDb"
+  },
+  "args": [
+    {
+      "type": "text",
+      "name": "measurement",
+      "title": {
+        "en": "Measurement name"
+      }
+    },
+    {
+      "type": "number",
+      "name": "value",
+      "title": {
+        "en": "Value"
+      }
+    }
+  ]
+}

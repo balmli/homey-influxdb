@@ -1,6 +1,6 @@
 {
   "id": "homey.influxdb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "compatibility": ">=8.1.0",
   "sdk": 3,
   "brandColor": "#25b0f8",
@@ -52,6 +52,5 @@
       }
     }
   },
-  "homeyCommunityTopicId": 32405,
-  "source": "https://github.com/balmli/homey-influxdb"
+  "homeyCommunityTopicId": 32405
 }

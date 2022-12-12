@@ -1,4 +1,7 @@
 {
+  "1.1.0": {
+    "en": "Support for storing enum capabilities. Added 'Write boolean', 'Write number' and 'Write text' actions. "
+  },
   "1.0.0": {
     "en": "Updated to SDK3. Updated settings. "
   },

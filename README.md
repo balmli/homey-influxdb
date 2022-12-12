@@ -1,6 +1,6 @@
 # InfluxDb support for Athom Homey
 
-This app will log all numeric and boolean capabilities to a InfluxDb database.
+This app will log all numeric, boolean and enum capabilities to a InfluxDb database.
 
 ## Install:
 
@@ -9,6 +9,11 @@ The IP address, port number and database for the InfluxDb must be entered in app
 For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x they must not be set.
 
 ## Release Notes:
+
+#### 1.1.0
+
+- Support for storing enum capabilities
+- Added 'Write boolean', 'Write number' and 'Write text' actions
 
 #### 1.0.0
 
@@ -79,12 +84,6 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 #### 0.9.0
 
 - First version
-
-
-## Acknowledgements:
-
-- Thanks to https://github.com/harriedegroot/nl.hdg.mqtt for inspiration!
-- Thanks to https://github.com/gruijter/com.gruijter.insights2csv for exporting logs!
 
 
 ## Disclaimer:

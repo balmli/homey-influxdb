@@ -4,7 +4,7 @@ env.json
 node_modules/*
 !node_modules/athom-api
 !node_modules/http.min
-test/*
+tests2/*
 
 
 # Added by Homey CLI
