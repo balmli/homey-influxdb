@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/balmli/homey-influxdb#readme",
   "dependencies": {
-    "athom-api": "^3.2.13",
+    "homey-api": "1.10.12",
     "http.min": "^2.0.1"
   },
   "devDependencies": {

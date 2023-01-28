@@ -10,6 +10,10 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 1.2.0
+
+- Updated to homey-api
+
 #### 1.1.0
 
 - Support for storing enum capabilities

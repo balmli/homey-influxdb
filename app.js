@@ -1,7 +1,7 @@
 'use strict';
 
 const Homey = require('homey');
-const { HomeyAPI } = require('athom-api');
+const { HomeyAPIApp } = require('homey-api');
 const { delay } = require('./lib/util');
 const measurementsUtil = require('./lib/measurementsUtil');
 const HomeyStateHandler = require('./lib/HomeyStateHandler');
@@ -16,7 +16,6 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._running = false;
             this.homey.on('unload', () => this._onUninstall());
             await this.getApi();
-            this._api.devices.setMaxListeners(9999);
             if (await this.shallWaitForHomey()) {
                 await this.waitForHomey();
             }
@@ -182,7 +181,7 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     async getApi() {
         if (!this._api) {
-            this._api = await HomeyAPI.forCurrentHomey(this.homey);
+            this._api = new HomeyAPIApp({ homey: this.homey, debug: false });
         }
         return this._api;
     }
