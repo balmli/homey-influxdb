@@ -1,7 +1,7 @@
 'use strict';
 
 const Homey = require('homey');
-const { HomeyAPIApp } = require('homey-api');
+const { HomeyAPI } = require('homey-api');
 const { delay } = require('./lib/util');
 const measurementsUtil = require('./lib/measurementsUtil');
 const HomeyStateHandler = require('./lib/HomeyStateHandler');
@@ -12,9 +12,13 @@ const InfluxDb = require('./lib/InfluxDb');
 module.exports = class InfluxDbApp extends Homey.App {
 
     async onInit() {
+        this._running = false;
+        this.homey.on('unload', () => this._onUninstall());
+        this.onStartup();
+    }
+
+    async onStartup() {
         try {
-            this._running = false;
-            this.homey.on('unload', () => this._onUninstall());
             await this.getApi();
             if (await this.shallWaitForHomey()) {
                 await this.waitForHomey();
@@ -32,7 +36,7 @@ module.exports = class InfluxDbApp extends Homey.App {
             this._running = true;
             this.log('InfluxDbApp is running...');
         } catch (err) {
-            this.log('onInit error', err);
+            this.log('onStartup error:', err);
         }
     }
 
@@ -80,8 +84,8 @@ module.exports = class InfluxDbApp extends Homey.App {
             this.homey.settings.set('measurement_prefix', measurementPrefix);
         }
         const homey_metrics = this.homey.settings.get('homey_metrics');
-        if (homey_metrics === null || homey_metrics === true) {
-            this.homey.settings.set('homey_metrics', 'true');
+        if (homey_metrics === null || homey_metrics === undefined) {
+            this.homey.settings.set('homey_metrics', 'homey');
         } else if (homey_metrics === false) {
             this.homey.settings.set('homey_metrics', 'false');
         }
@@ -181,7 +185,11 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     async getApi() {
         if (!this._api) {
-            this._api = new HomeyAPIApp({ homey: this.homey, debug: false });
+            this._api = await HomeyAPI.createAppAPI({homey: this.homey, debug: false});
+            await this._api.system.connect();
+            await this._api.devices.connect();
+            await this._api.zones.connect();
+            await this._api.insights.connect();
         }
         return this._api;
     }
