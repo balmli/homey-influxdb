@@ -10,6 +10,10 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
+#### 1.2.2
+
+- Fixes for Homey Pro 2023
+
 #### 1.2.1
 
 - Fixes for Homey Pro 2023
