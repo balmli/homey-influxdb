@@ -1,11 +1,11 @@
 {
   "name": "homey-influxdb",
-  "version": "0.9.14",
+  "version": "1.0.0",
   "description": "Metrics exporter for InfluxDb",
   "main": "app.js",
   "scripts": {
-    "run": "homeyConfig compose && athom project --run",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec",
+    "posttest": "homey app validate"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/balmli/homey-influxdb#readme",
   "dependencies": {
-    "homey-api": "3.0.0-rc.11",
+    "homey-api": "3.14.23",
     "http.min": "^2.0.1"
   },
   "devDependencies": {
