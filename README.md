@@ -10,7 +10,7 @@ For InfluxDB 2.x, the organization ID and token must be set.  For InfluxDB 1.x t
 
 ## Release Notes:
 
-#### 1.3.0
+#### 1.3.1
 
 - Improved error handling
 
