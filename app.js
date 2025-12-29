@@ -13,6 +13,16 @@ module.exports = class InfluxDbApp extends Homey.App {
 
     async onInit() {
         this._running = false;
+
+        // Global error handlers to prevent app crashes
+        process.on('uncaughtException', (err) => {
+            this.error('Uncaught exception:', err);
+        });
+
+        process.on('unhandledRejection', (reason, promise) => {
+            this.error('Unhandled promise rejection:', reason);
+        });
+
         this.homey.on('unload', () => this._onUninstall());
         this.onStartup();
     }
@@ -116,6 +126,14 @@ module.exports = class InfluxDbApp extends Homey.App {
         this.log('Settings changed', key);
         if (key === 'settings') {
             const settings = this.homey.settings.get('settings');
+
+            // Validate settings before applying
+            const validationError = this._validateSettings(settings);
+            if (validationError) {
+                this.error('Invalid settings:', validationError);
+                return;
+            }
+
             this.homey.settings.set('host', settings.host);
             this.homey.settings.set('protocol', settings.protocol);
             this.homey.settings.set('port', settings.port);
@@ -132,6 +150,47 @@ module.exports = class InfluxDbApp extends Homey.App {
                 measurementPrefix: settings.measurement_prefix
             };
         }
+    }
+
+    _validateSettings(settings) {
+        if (!settings) {
+            return 'Settings object is missing';
+        }
+
+        // Validate host
+        if (!settings.host || typeof settings.host !== 'string' || !settings.host.trim()) {
+            return 'Host cannot be empty';
+        }
+
+        // Validate port
+        const port = parseInt(settings.port);
+        if (isNaN(port) || port < 1 || port > 65535) {
+            return 'Port must be a number between 1 and 65535';
+        }
+
+        // Validate protocol
+        if (settings.protocol !== 'http' && settings.protocol !== 'https') {
+            return 'Protocol must be http or https';
+        }
+
+        // Validate database
+        if (!settings.database || typeof settings.database !== 'string' || !settings.database.trim()) {
+            return 'Database/bucket cannot be empty';
+        }
+
+        // Validate v2 authentication (organization and token must both be present or both be absent)
+        const hasOrganization = settings.organization && settings.organization.trim().length > 0;
+        const hasToken = settings.token && settings.token.trim().length > 0;
+
+        if (hasOrganization && !hasToken) {
+            return 'Token is required when organization is provided (InfluxDB v2)';
+        }
+
+        if (hasToken && !hasOrganization) {
+            return 'Organization is required when token is provided (InfluxDB v2)';
+        }
+
+        return null; // Valid
     }
 
     async shallWaitForHomey() {

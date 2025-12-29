@@ -1,4 +1,7 @@
 {
+  "1.3.0": {
+    "en": "Improved error handling."
+  },
   "1.2.2": {
     "en": "Fixes for Homey Pro 2023."
   },

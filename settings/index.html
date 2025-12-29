@@ -152,16 +152,50 @@
     });
 
     document.getElementById('save').addEventListener('click', async function (e) {
+      // Validate inputs before saving
+      const host = hostElement.value.trim();
+      if (!host) {
+        return Homey.alert('Host cannot be empty');
+      }
+
+      const port = parseInt(portElement.value);
+      if (isNaN(port) || port < 1 || port > 65535) {
+        return Homey.alert('Port must be a number between 1 and 65535');
+      }
+
+      const protocol = protocolElement.value;
+      if (protocol !== 'http' && protocol !== 'https') {
+        return Homey.alert('Protocol must be http or https');
+      }
+
+      const database = databaseElement.value.trim();
+      if (!database) {
+        return Homey.alert('Database/bucket cannot be empty');
+      }
+
+      const organization = organizationElement.value.trim();
+      const token = tokenElement.value.trim();
+
+      // If organization is provided, token must be provided (v2 validation)
+      if (organization && !token) {
+        return Homey.alert('Token is required when using InfluxDB v2 (organization is provided)');
+      }
+
+      // If token is provided, organization must be provided (v2 validation)
+      if (token && !organization) {
+        return Homey.alert('Organization is required when using InfluxDB v2 (token is provided)');
+      }
+
       updateView('status');
       Homey.set('settings', {
-        host: hostElement.value,
-        protocol: protocolElement.value,
+        host: host,
+        protocol: protocol,
         port: portElement.value,
-        organization: organizationElement.value,
-        token: tokenElement.value,
+        organization: organization,
+        token: token,
         username: usernameElement.value,
         password: passwordElement.value,
-        database: databaseElement.value,
+        database: database,
         measurement_mode: measurementModeElement.value,
         measurement_prefix: measurementPrefixElement.value
       }, function (err) {
